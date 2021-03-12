@@ -12,14 +12,14 @@ void Load()
     dungeonScene->load();
 
     activeScene = dungeonScene;
-
-    //ls::loadLevelFile("res/dev_level.txt", 64.f);
 }
 
 void Update(sf::RenderWindow& window) 
 {
     static sf::Clock clock;
     float dt = clock.restart().asSeconds();
+
+    activeScene->update(dt);
 }
 
 void Render(sf::RenderWindow& window)
@@ -35,7 +35,6 @@ void Render(sf::RenderWindow& window)
     }
 
     activeScene->render(window);
-    //ls::Render(window);
 }
 
 int main() 

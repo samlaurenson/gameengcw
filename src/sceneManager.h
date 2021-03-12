@@ -14,4 +14,5 @@ public:
 	void update(double dt) override;
 	void render(sf::RenderWindow& window) override;
 	void load() override;
+	void restart();
 };
