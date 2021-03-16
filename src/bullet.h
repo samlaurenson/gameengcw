@@ -14,5 +14,6 @@ protected:
 	void _Update(const float& dt); //called by the static Update()
 	bool _mode; //false -> player bullet, true -> enemy bullet
 	bool _fired;
+	sf::Vector2f startPoint;
 	sf::Vector2i direction;
 };

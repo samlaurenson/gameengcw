@@ -33,9 +33,10 @@ void Bullet::Fire(const sf::Vector2f& pos, const bool mode, sf::Vector2i directi
 	Bullet& b = bullets[++bulletPointer]; //getting memory address for object in bullets array
 	b._mode = mode;
 	b._fired = true;
-	b.setPosition(pos);
+	b.setPosition(pos);		 //Setting position to players position when firing bullet
 	b.setTexture(spritesheet);
-	b.direction = direction; //direction in which the bullet will travel e.g. from player to cursor
+	b.startPoint = pos;		 //Position of where the bullet is fired from
+	b.direction = direction; //direction in which the bullet will travel e.g. from startPoint to cursor
 
 	//If player shoots - set bullet to player projectile style
 	if (mode == false)
@@ -56,8 +57,8 @@ void Bullet::_Update(const float& dt) {
 		sf::Vector2f delta;
 
 		//Getting difference between where to travel and the players position
-		delta.x = direction.x - player->getPosition().x;
-		delta.y = direction.y - player->getPosition().y;
+		delta.x = direction.x - startPoint.x;
+		delta.y = direction.y - startPoint.y;
 
 		//Using inverse tan to find the angle between the player and the destination
 		float angle = atan2(delta.y, delta.x);
