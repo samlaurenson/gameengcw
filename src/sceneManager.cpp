@@ -3,6 +3,7 @@
 #include "sceneManager.h"
 #include "cmp_shape.h"
 #include "cmp_player_movement.h"
+#include "game.h"
 
 std::shared_ptr<Entity> player;
 

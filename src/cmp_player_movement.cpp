@@ -1,4 +1,5 @@
 #include "cmp_player_movement.h"
+#include "bullet.h"
 
 PlayerMovementComponent::PlayerMovementComponent(Entity* p) : ActorMovementComponent(p) {}
 
@@ -23,6 +24,19 @@ void PlayerMovementComponent::update(double dt)
 	{
 		move(sf::Vector2f((_speed * dt), 0));
 	}
+
+	//Not a movement but will be here to keep controls centralised 
+	/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+	{
+		Bullet::Fire(_parent->getPosition(), false, );
+	}*/
+
+	/*if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	{
+		sf::Vector2i mousepos = sf::Mouse::getPosition(window);
+		Bullet::Fire(_parent->getPosition(), false, mousepos.x, mousepos.y);
+		firetime = 0.7f;
+	}*/
 
 	ActorMovementComponent::update(dt);
 }
