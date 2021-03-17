@@ -12,6 +12,7 @@ protected:
 	std::vector<std::shared_ptr<Component>> _components;
 	sf::Vector2f _position;
 	int _health;
+	float _fireRate;
 	float _rotation;
 	bool _alive; // should be updated
 	bool _visible; // should be updated
@@ -34,6 +35,8 @@ public:
 	void setVisible(bool _visible);
 	void setHealth(int _health);
 	int getHealth() const;
+	void setFirerate(float _fireRate);
+	float getFirerate() const;
 
 	template<typename T, typename... Targs>
 	std::shared_ptr<T> addComponent(Targs... params) {

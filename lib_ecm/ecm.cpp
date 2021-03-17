@@ -44,3 +44,23 @@ void EntityManager::render(sf::RenderWindow& window)
 Component::Component(Entity* const p) : _parent(p)
 {
 }
+
+void Entity::setHealth(int health)
+{
+	_health = health;
+}
+
+int Entity::getHealth() const
+{
+	return _health;
+}
+
+void Entity::setFirerate(float fireRate)
+{
+	_fireRate = fireRate;
+}
+
+float Entity::getFirerate() const
+{
+	return _fireRate;
+}

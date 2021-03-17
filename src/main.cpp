@@ -11,7 +11,7 @@ sf::Texture spritesheet;
 
 void Load()
 {
-    if (!spritesheet.loadFromFile("res/img/invaders_sheet.jpg"))
+    if (!spritesheet.loadFromFile("res/img/spritesheetEntity.png"))
     {
         std::cerr << "Failed to load spritesheet!" << std::endl;
     }
@@ -30,14 +30,17 @@ void Update(sf::RenderWindow& window)
 
     activeScene->update(dt);
 
-    //Should probably put this in a better place but will work here for now since a RenderWindow is required
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-    {
-        sf::Vector2i mousepos = sf::Mouse::getPosition(window);
-        Bullet::Fire(player->getPosition(), false, mousepos);
-    }
 
-    Bullet::Update(dt);
+    static float firetime = 0.0f;
+    firetime -= dt;
+
+    //Should probably put this in a better place but will work here for now since a RenderWindow is required
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && firetime <= 0)
+    {
+        firetime = player->getFirerate();
+        sf::Vector2i mousepos = sf::Mouse::getPosition(window);
+        Bullet::Fire(player->getPosition(), false, mousepos, 25);
+    }
 }
 
 void Render(sf::RenderWindow& window)
