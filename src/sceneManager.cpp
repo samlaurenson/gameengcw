@@ -6,6 +6,7 @@
 #include "game.h"
 #include "bullet.h"
 #include "cmp_actor_model.h"
+#include "enemy.h"
 
 std::shared_ptr<Entity> player;
 std::shared_ptr<Entity> enemy;
@@ -36,11 +37,12 @@ void DungeonScene::load()
 	player = pl;
 
 	//Loading enemies
-	auto en = std::make_shared<Entity>();
+	auto en = std::make_shared<Enemy>();
 	en->setHealth(100);
+	en->setDetectionDistance(350.f);
 	//add component for enemy movement and detection radius for when the enemy will start firing at enemy
 	auto model = en->addComponent<ActorModelComponent>();
-	model->setModel(sf::IntRect(32,0,32,32));
+	model->setModel(sf::IntRect(32, 0, 32, 32));
 
 	_ents.list.push_back(en);
 	enemy = en;
