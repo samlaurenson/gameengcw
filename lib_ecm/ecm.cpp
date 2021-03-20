@@ -37,7 +37,10 @@ void EntityManager::render(sf::RenderWindow& window)
 {
 	for (auto& e : list)
 	{
-		e->render(window);
+		if (e->isAlive())
+		{
+			e->render(window);
+		}
 	}
 }
 
@@ -63,4 +66,14 @@ void Entity::setFirerate(float fireRate)
 float Entity::getFirerate() const
 {
 	return _fireRate;
+}
+
+void Entity::setAlive(bool alive)
+{
+	_alive = alive;
+}
+
+bool Entity::isAlive() const
+{
+	return _alive;
 }

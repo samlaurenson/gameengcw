@@ -38,6 +38,7 @@ void DungeonScene::load()
 	//Loading enemies
 	auto en = std::make_shared<Entity>();
 	en->setHealth(100);
+	//add component for enemy movement and detection radius for when the enemy will start firing at enemy
 	auto model = en->addComponent<ActorModelComponent>();
 	model->setModel(sf::IntRect(32,0,32,32));
 

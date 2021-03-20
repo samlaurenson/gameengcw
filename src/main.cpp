@@ -11,7 +11,7 @@ sf::Texture spritesheet;
 
 void Load()
 {
-    if (!spritesheet.loadFromFile("res/img/spritesheetEntity.png"))
+    if (!spritesheet.loadFromFile("res/img/spritesheetEntity2.png"))
     {
         std::cerr << "Failed to load spritesheet!" << std::endl;
     }

@@ -24,7 +24,10 @@ void Bullet::Render(sf::RenderWindow& window)
 {
 	for (auto& bullet : bullets)
 	{
-		window.draw(bullet);
+		if (bullet._fired)
+		{
+			window.draw(bullet);
+		}
 	}
 };
 
@@ -47,6 +50,7 @@ void Bullet::Fire(const sf::Vector2f& pos, const bool mode, sf::Vector2i directi
 	}
 };
 
+//TODO: Add damage field to entity so that input for bullet fire will be player->getDamage() (for example) so that modifiers to damage will be easier to implement
 void Bullet::_Update(const float& dt) {
 
 	if (getPosition().y < -32 || getPosition().y > 1080 + 32 || getPosition().x > 1920 + 32 || getPosition().x < -32)
@@ -55,7 +59,12 @@ void Bullet::_Update(const float& dt) {
 		return;
 	}
 	else {
-		//Keeping it simple for now -- simply just moving the bullets
+		//If the bullet is not fired - then don't do anything
+		if (!_fired)
+		{
+			return;
+		}
+
 		sf::Vector2f delta;
 
 		//Getting difference between where to travel and the players position
@@ -68,53 +77,49 @@ void Bullet::_Update(const float& dt) {
 		//Using cosine and sine functions to move the projectile to the destination
 		move(cos(angle) * dt * 200.0f, sin(angle) * dt * 200.0f);
 
-		const sf::FloatRect boundingBox = getGlobalBounds(); //Maybe would be better to do collisions like how they are done in the pacman lab between ghosts?
-
 		//Will use this to check bullet collision for players and enemies
 		std::vector<std::shared_ptr<Entity>> activeEntities = activeScene->getEnts();
 
-
-		//sf::length(player->getPosition() - e->getPosition()) < 30.f)
 		for (auto& e : activeEntities)
 		{
-			if (sf::length(getPosition() - e->getPosition()) < 15.f)
+			if (e->isAlive())
 			{
-				//If player is hit by own bullet - do nothing
-				if (!_mode && e == player)
+				if (sf::length(getPosition() - e->getPosition()) < 20.f)
 				{
-					std::cout << "Player hit by own bullet" << std::endl;
-					continue;
-				}
+					//If player is hit by own bullet - do nothing
+					if (!_mode && e == player)
+					{
+						std::cout << "Player hit by own bullet" << std::endl;
+						continue;
+					}
 
-				//If enemy is hit by own bullet - do nothing
-				if (_mode && e != player)
-				{
-					std::cout << "Enemy hit by own bullet" << std::endl;
-					continue;
-				}
+					//If enemy is hit by own bullet - do nothing
+					if (_mode && e != player)
+					{
+						std::cout << "Enemy hit by own bullet" << std::endl;
+						continue;
+					}
 
-				//Deal damage
-				//Sets the entities health to their current health minus the damage of the bullet
-				e->setHealth(e->getHealth() - _damage);
+					//Deal damage
+					//Sets the entities health to their current health minus the damage of the bullet
+					e->setHealth(e->getHealth() - _damage);
 
-				std::cout << "Enemy Health: " << e->getHealth() << std::endl;
-				//Now get rid of bullet to prevent bullet from dealing damage as it travels through the enemy
-				_damage = 0;
-				
-				setTextureRect(sf::IntRect(0, 0, 0, 0));
+					std::cout << "Enemy Health: " << e->getHealth() << std::endl;
 
-				//If entity is dead
-				if (e->getHealth() <= 0)
-				{
-					std::cout << "Enemy is dead" << std::endl;
+					//After dealing damage, the bullet will be set to deal 0 damage and will be made invisible
+					_damage = 0;
+					setTextureRect(sf::IntRect(0, 0, 0, 0));
+					 
+					//If entity is dead
+					if (e->getHealth() <= 0)
+					{
+						e->setAlive(false);
+						//e->GetCompatibleComponent<ActorModelComponent>()[0]->setModel(sf::IntRect(0, 0, 0, 0)); //make enemy disappear when dead
+						_fired = false;
+						std::cout << "Enemy is dead" << std::endl;
+					}
 				}
 			}
-		}
-
-		//If the bullet is not fired - then don't do anything
-		if (!_fired)
-		{
-			return;
 		}
 
 		//If statements to provide better collision with walls
@@ -125,7 +130,7 @@ void Bullet::_Update(const float& dt) {
 		{
 			//If touches wall - move off screen or hide bullet and set fired to false
 			std::cout << "contact with wall" << std::endl;
-			setPosition(400, 400);
+			_fired = false;
 		}
 	}
 };
