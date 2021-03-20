@@ -1,7 +1,7 @@
 #include "scene.h"
 
 extern std::shared_ptr<Entity> player;
-extern std::shared_ptr<Entity> enemy;
+extern std::vector<std::shared_ptr<Entity>> enemies;
 
 extern std::shared_ptr<Scene> activeScene;
 extern std::shared_ptr<Scene> dungeonScene;

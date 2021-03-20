@@ -108,16 +108,7 @@ void Bullet::_Update(const float& dt) {
 
 					//After dealing damage, the bullet will be set to deal 0 damage and will be made invisible
 					_damage = 0;
-					setTextureRect(sf::IntRect(0, 0, 0, 0));
-					 
-					//If entity is dead
-					if (e->getHealth() <= 0)
-					{
-						e->setAlive(false);
-						//e->GetCompatibleComponent<ActorModelComponent>()[0]->setModel(sf::IntRect(0, 0, 0, 0)); //make enemy disappear when dead
-						_fired = false;
-						std::cout << "Enemy is dead" << std::endl;
-					}
+					_fired = false;
 				}
 			}
 		}

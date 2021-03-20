@@ -95,3 +95,9 @@ struct EntityManager {
 	void update(double dt);
 	void render(sf::RenderWindow& window);
 };
+
+struct Buff {
+	enum BUFFTYPE { ATKDMG, ATKSPEED };
+	BUFFTYPE buff;
+	float modifier;
+};
