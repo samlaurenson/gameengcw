@@ -34,6 +34,7 @@ void DungeonScene::load()
 	shape->getShape().setFillColor(sf::Color::Red);
 	shape->getShape().setOrigin(sf::Vector2f(5.f, 5.f));
 	pl->addComponent<ActorBuffComponent>();
+	pl->addComponent<ActorModelComponent>();
 
 	_ents.list.push_back(pl);
 	player = pl;
@@ -51,6 +52,7 @@ void DungeonScene::load()
 	//add component for enemy movement and detection radius for when the enemy will start firing at enemy
 	auto model = en->addComponent<ActorModelComponent>();
 	model->setModel(sf::IntRect(32, 0, 32, 32));
+	model->setScaleFactor(3.f);
 
 	_ents.list.push_back(en);
 	enemies.push_back(en);

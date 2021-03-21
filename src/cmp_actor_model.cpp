@@ -12,7 +12,17 @@ void ActorModelComponent::setModel(sf::IntRect model)
 
 void ActorModelComponent::render(sf::RenderWindow& window) { window.draw(_sprite); }
 
-void ActorModelComponent::update(double dt) 
+void ActorModelComponent::update(double dt)
 {
 	_sprite.setPosition(_parent->getPosition());
+}
+
+void ActorModelComponent::setScaleFactor(float scalefactor)
+{
+	_sprite.setScale(scalefactor, scalefactor);
+}
+
+float ActorModelComponent::getScaleFactor() const
+{
+	return _sprite.getScale().x;
 }

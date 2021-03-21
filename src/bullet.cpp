@@ -1,6 +1,7 @@
 #include "bullet.h"
 #include "game.h"
 #include "sceneManager.h"
+#include "cmp_actor_model.h"
 #include <LevelSystem.h>
 #include <iostream>
 
@@ -84,7 +85,13 @@ void Bullet::_Update(const float& dt) {
 		{
 			if (e->isAlive())
 			{
-				if (sf::length(getPosition() - e->getPosition()) < 20.f)
+				//sf::length(getPosition() - e->getPosition()) < 20.f
+				float scalefac = e->GetCompatibleComponent<ActorModelComponent>()[0]->getScaleFactor();
+
+				//Most likely a better way of bullet collision with scalable entities
+				//Will get length between the bullet and the enemy position. If the bullet is less than 20 pixels multiplied by the scale factor of the enemy minus the scale factor multiplied by 2 (just to make bullet collide with enemy rather than disappear before hitting)
+				//then bullet will hit the enemy
+				if (sf::length(getPosition() - e->getPosition()) < (20.f * scalefac) - scalefac*2)
 				{
 					//If player is hit by own bullet - do nothing
 					if (!_mode && e == player)

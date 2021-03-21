@@ -13,4 +13,6 @@ public:
 
 	void render(sf::RenderWindow& window) override;
 	void update(double dt) override;
+	void setScaleFactor(float scalefactor);
+	float getScaleFactor() const;
 };
