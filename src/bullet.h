@@ -5,7 +5,7 @@ class Bullet : public sf::Sprite {
 public:
 	static void Update(const float& dt);
 	static void Render(sf::RenderWindow& window);
-	static void Fire(const sf::Vector2f& pos, const bool mode, sf::Vector2i direction, int damage);
+	static void Fire(const sf::Vector2f& pos, const bool mode, sf::Vector2f direction, int damage);
 	~Bullet() = default;
 protected:
 	Bullet(); //Never called by our code
@@ -15,6 +15,6 @@ protected:
 	bool _mode; //false -> player bullet, true -> enemy bullet
 	bool _fired;
 	sf::Vector2f startPoint;
-	sf::Vector2i direction;
+	sf::Vector2f direction;
 	int _damage;
 };

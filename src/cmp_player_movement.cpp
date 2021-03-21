@@ -1,5 +1,6 @@
 #include "cmp_player_movement.h"
 #include "bullet.h"
+#include "game.h"
 
 PlayerMovementComponent::PlayerMovementComponent(Entity* p) : ActorMovementComponent(p) {}
 

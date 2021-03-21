@@ -9,6 +9,8 @@ int gameWidth = 1920;
 
 sf::Texture spritesheet;
 
+sf::View Camera;
+
 void Load()
 {
     if (!spritesheet.loadFromFile("res/img/spritesheetEntity2.png"))
@@ -23,7 +25,7 @@ void Load()
     activeScene = dungeonScene;
 }
 
-void Update(sf::RenderWindow& window) 
+void Update(sf::RenderWindow& window)
 {
     static sf::Clock clock;
     float dt = clock.restart().asSeconds();
@@ -38,7 +40,7 @@ void Update(sf::RenderWindow& window)
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && firetime <= 0)
     {
         firetime = player->getFirerate();
-        sf::Vector2i mousepos = sf::Mouse::getPosition(window);
+        sf::Vector2f mousepos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
         Bullet::Fire(player->getPosition(), false, mousepos, 25);
     }
 }
@@ -59,13 +61,16 @@ void Render(sf::RenderWindow& window)
     Bullet::Render(window);
 }
 
-int main() 
+int main()
 {
     sf::RenderWindow window(sf::VideoMode(gameWidth, gameHeight), "Trollstigen");
     Load();
     while (window.isOpen())
     {
         window.clear();
+        Camera.setSize(gameWidth, gameHeight);
+        Camera.setCenter(player->getPosition());
+        window.setView(Camera);
         Update(window);
         Render(window);
         window.display();
