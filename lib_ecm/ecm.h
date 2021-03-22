@@ -12,11 +12,14 @@ protected:
 	std::vector<std::shared_ptr<Component>> _components;
 	sf::Vector2f _position;
 	int _health;
+	int _damage;
 	float _fireRate;
 	float _rotation;
 	bool _alive; // should be updated
 	bool _visible; // should be updated
 	bool _fordeletion; // should be declared
+	int _healthpool;
+	bool _randomSpawn;
 public:
 	Entity();
 	virtual ~Entity() = default;
@@ -37,6 +40,12 @@ public:
 	int getHealth() const;
 	void setFirerate(float _fireRate);
 	float getFirerate() const;
+	void setHealthPool(int _healthpool);
+	int getHealthPool() const;
+	int getDamage() const;
+	void setDamage(int _damage);
+	void setRandomSpawnType(bool _randomSpawn);
+	bool getRandomSpawnType() const;
 
 	template<typename T, typename... Targs>
 	std::shared_ptr<T> addComponent(Targs... params) {

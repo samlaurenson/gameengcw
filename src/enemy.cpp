@@ -15,7 +15,7 @@ void Enemy::update(double dt)
 		if (firetime <= 0)
 		{
 			firetime = getFirerate();
-			Bullet::Fire(getPosition(), true, player->getPosition(), 25);
+			Bullet::Fire(getPosition(), true, player->getPosition(), getDamage());
 
 		}
 		std::cout << "Player detected by enemy" << std::endl;

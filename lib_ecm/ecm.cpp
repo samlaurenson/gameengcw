@@ -80,3 +80,33 @@ bool Entity::isAlive() const
 {
 	return _alive;
 }
+
+void Entity::setHealthPool(int healthPool)
+{
+	_healthpool = healthPool;
+}
+
+int Entity::getHealthPool() const
+{
+	return _healthpool;
+}
+
+void Entity::setDamage(int damage)
+{
+	_damage = damage;
+}
+
+int Entity::getDamage() const
+{
+	return _damage;
+}
+
+void Entity::setRandomSpawnType(bool randomSpawn)
+{
+	_randomSpawn = randomSpawn;
+}
+
+bool Entity::getRandomSpawnType() const
+{
+	return _randomSpawn;
+}

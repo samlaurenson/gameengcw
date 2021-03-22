@@ -26,8 +26,9 @@ void DungeonScene::load()
 {
 	//Loading in player
 	auto pl = std::make_shared<Entity>();
-	pl->setHealth(200);
+	pl->setHealthPool(200);
 	pl->setFirerate(0.4f);
+	pl->setDamage(25);
 
 	pl->addComponent<PlayerMovementComponent>();
 	auto shape = pl->addComponent<ShapeComponent>();
@@ -42,8 +43,11 @@ void DungeonScene::load()
 
 	//Loading enemies
 	auto en = std::make_shared<Enemy>();
-	en->setHealth(100);
+	en->setHealthPool(100);
+	//en->setHealth(en->getHealthPool());
 	en->setDetectionDistance(350.f);
+	en->setDamage(25);
+	en->setRandomSpawnType(true);
 
 	auto b = std::make_shared<Buff>();
 	b->buff = Buff::ATKSPEED;
@@ -71,6 +75,7 @@ void DungeonScene::update(double dt)
 	{
 		activeScene = bossScene;
 		Bullet::clear();
+		restart();
 	}
 	Scene::update(dt);
 	Bullet::Update(dt);
@@ -86,15 +91,35 @@ void DungeonScene::render(sf::RenderWindow& window)
 //Function to reset player position when dungeon scene is loaded
 void DungeonScene::restart()
 {
+	srand((int)time(0)); //Using time as seed in srand to make randomly generated numbers more random
+
 	//Also reset player and enemy health here for when scenes are restarted
+	player->setHealth(player->getHealthPool());
+	//player->setFirerate(0.4f);
 	player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
 	player->GetCompatibleComponent<ActorMovementComponent>()[0]->setSpeed(150.f);
 
 	//could add a type to enemy entity to check whether they are a regular or hard enemy type so if enemy is regular spawn on enemy tile, if enemy is hard spawn on randomenemy tile
 	for (int i = 0; i < enemies.size(); i++)
 	{
-		//Will place enemies as long as the number of enemies is equal to the number of enemy spawns
-		enemies[i]->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[i]));
+		enemies[i]->setHealth(enemies[i]->getHealthPool());
+		enemies[i]->setAlive(true);
+
+		auto enemyTiles = ls::findTiles(ls::ENEMY); //create new tile type for ENEMYRANDOM
+		
+		//Placeholder for spawning enemies - if the enemy is a random spawn type, it will randomly select a ENEMYRANDOM tile and will spawn the enemy there and remove the tile from the vector
+		//to prevent other enemies from spawning in the same space
+		//If not random spawn type, then enemies will spawn on all set tiles
+		if (enemies[i]->getRandomSpawnType())
+		{
+			int random = rand() % enemyTiles.size();
+			enemies[i]->setPosition(ls::getTilePosition(enemyTiles[random]));
+			enemyTiles.erase(enemyTiles.begin() + random);
+		}
+		else {
+			//Will place enemies as long as there are enough spawn points for enemies
+			enemies[i]->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[i]));
+		}
 	}
 }
 
@@ -108,6 +133,7 @@ void BossScene::load()
 	boss->setHealth(1000);
 	boss->setDetectionDistance(1000);
 	boss->setFirerate(0.2f);
+	boss->setDamage(75);
 	auto model = boss->addComponent<ActorModelComponent>();
 	model->setModel(sf::IntRect(32, 0, 32, 32));
 	model->setScaleFactor(10.f);
