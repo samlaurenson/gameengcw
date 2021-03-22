@@ -129,3 +129,12 @@ void Bullet::_Update(const float& dt) {
 		_fired = false;
 	}
 };
+
+//function used to deactivate all bullets on screen 
+void Bullet::clear()
+{
+	for (auto& bullet : bullets)
+	{
+		bullet._fired = false;
+	}
+}

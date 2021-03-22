@@ -14,6 +14,7 @@ std::vector<std::shared_ptr<Entity>> enemies;
 
 std::shared_ptr<Scene> activeScene;
 std::shared_ptr<Scene> dungeonScene;
+std::shared_ptr<Scene> bossScene;
 
 void Scene::render(sf::RenderWindow& window) { _ents.render(window); }
 
@@ -64,6 +65,13 @@ void DungeonScene::load()
 
 void DungeonScene::update(double dt)
 {
+	//Using this to check transition between dungeon scene and boss scene (i.e. all bullets clear off screen and player and boss load)
+	//Replace this with if the user runs over the boss room entrance
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+	{
+		activeScene = bossScene;
+		Bullet::clear();
+	}
 	Scene::update(dt);
 	Bullet::Update(dt);
 }
@@ -71,17 +79,60 @@ void DungeonScene::update(double dt)
 void DungeonScene::render(sf::RenderWindow& window)
 {
 	ls::Render(window);
+	Bullet::Render(window);
 	Scene::render(window);
 }
 
 //Function to reset player position when dungeon scene is loaded
 void DungeonScene::restart()
 {
+	//Also reset player and enemy health here for when scenes are restarted
 	player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
 	player->GetCompatibleComponent<ActorMovementComponent>()[0]->setSpeed(150.f);
+
+	//could add a type to enemy entity to check whether they are a regular or hard enemy type so if enemy is regular spawn on enemy tile, if enemy is hard spawn on randomenemy tile
 	for (int i = 0; i < enemies.size(); i++)
 	{
 		//Will place enemies as long as the number of enemies is equal to the number of enemy spawns
 		enemies[i]->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[i]));
 	}
+}
+
+void BossScene::load()
+{
+	_ents.list.push_back(player);
+
+	//may be cool to add actor buff component to boss where they have a higher fire rate when they reach 50% health
+	//so in update function - when boss health is less than 50% of its original health - apply attack speed buff
+	auto boss = std::make_shared<Enemy>();
+	boss->setHealth(1000);
+	boss->setDetectionDistance(1000);
+	boss->setFirerate(0.2f);
+	auto model = boss->addComponent<ActorModelComponent>();
+	model->setModel(sf::IntRect(32, 0, 32, 32));
+	model->setScaleFactor(10.f);
+
+	_ents.list.push_back(boss);
+
+	ls::loadLevelFile("res/dev_level.txt", 32.f);
+	boss->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]));
+}
+
+void BossScene::update(double dt)
+{
+	//Using this to test that dungeon scene will reset correctly when opened
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	{
+		activeScene = dungeonScene;
+		Bullet::clear();
+	}
+	Bullet::Update(dt);
+	Scene::update(dt);
+}
+
+void BossScene::render(sf::RenderWindow& window)
+{
+	ls::Render(window);
+	Bullet::Render(window);
+	Scene::render(window);
 }

@@ -20,7 +20,9 @@ void Load()
 
     //Loading scene assets
     dungeonScene.reset(new DungeonScene());
+    bossScene.reset(new BossScene());
     dungeonScene->load();
+    bossScene->load();
 
     activeScene = dungeonScene;
 }
@@ -71,7 +73,6 @@ void Render(sf::RenderWindow& window)
     }
 
     activeScene->render(window);
-    Bullet::Render(window);
 }
 
 int main()
