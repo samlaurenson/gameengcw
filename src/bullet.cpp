@@ -49,11 +49,16 @@ void Bullet::Fire(const sf::Vector2f& pos, const bool mode, sf::Vector2f directi
 	{
 		b.setTextureRect(sf::IntRect(0, 0, 32, 32));
 	}
+
+	if (mode == true)
+	{
+		b.setTextureRect(sf::IntRect(0, 0, 32, 32)); //change this to enemy bullet sprite
+	}
 };
 
 //TODO: Add damage field to entity so that input for bullet fire will be player->getDamage() (for example) so that modifiers to damage will be easier to implement
 void Bullet::_Update(const float& dt) {
-	//If the bullet is not fired - then don't do anything
+	//If the bullet is not fired - then don't do anything. This is required to stop the LevelSystem compaining when it is trying to find the tile the bullet is on when it hasn't been shot yet
 	if (!_fired)
 	{
 		return;
@@ -104,7 +109,7 @@ void Bullet::_Update(const float& dt) {
 				//Sets the entities health to their current health minus the damage of the bullet
 				e->setHealth(e->getHealth() - _damage);
 
-				std::cout << "Enemy Health: " << e->getHealth() << std::endl;
+				std::cout << "Entity Health: " << e->getHealth() << std::endl;
 
 				//After dealing damage, the bullet will be set to deal 0 damage and will be made invisible
 				_damage = 0;

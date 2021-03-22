@@ -29,7 +29,10 @@ void EntityManager::update(double dt)
 {
 	for (auto& e : list)
 	{
-		e->update(dt);
+		if (e->isAlive())
+		{
+			e->update(dt);
+		}
 	}
 }
 
