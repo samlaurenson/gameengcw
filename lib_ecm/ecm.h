@@ -20,6 +20,7 @@ protected:
 	bool _fordeletion; // should be declared
 	int _healthpool;
 	bool _randomSpawn;
+	float _bulletRange;
 public:
 	Entity();
 	virtual ~Entity() = default;
@@ -46,6 +47,8 @@ public:
 	void setDamage(int _damage);
 	void setRandomSpawnType(bool _randomSpawn);
 	bool getRandomSpawnType() const;
+	void setBulletRange(float _bulletRange);
+	float getBulletRange() const;
 
 	template<typename T, typename... Targs>
 	std::shared_ptr<T> addComponent(Targs... params) {

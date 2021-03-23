@@ -2,10 +2,13 @@
 
 extern std::shared_ptr<Entity> player;
 extern std::vector<std::shared_ptr<Entity>> enemies;
+extern std::shared_ptr<Entity> boss;
 
 extern std::shared_ptr<Scene> activeScene;
 extern std::shared_ptr<Scene> dungeonScene;
 extern std::shared_ptr<Scene> bossScene;
+
+extern sf::Clock timer;
 
 class DungeonScene : public Scene {
 private:

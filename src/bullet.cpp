@@ -32,7 +32,7 @@ void Bullet::Render(sf::RenderWindow& window)
 	}
 };
 
-void Bullet::Fire(const sf::Vector2f& pos, const bool mode, sf::Vector2f direction, int damage)
+void Bullet::Fire(const sf::Vector2f& pos, const bool mode, sf::Vector2f direction, int damage, float range)
 {
 	Bullet& b = bullets[++bulletPointer]; //getting memory address for object in bullets array
 	b._mode = mode;
@@ -43,16 +43,17 @@ void Bullet::Fire(const sf::Vector2f& pos, const bool mode, sf::Vector2f directi
 	b.setOrigin(16.f, 16.f);
 	b.startPoint = pos;		 //Position of where the bullet is fired from
 	b.direction = direction; //direction in which the bullet will travel e.g. from startPoint to cursor
+	b._range = range;
 
 	//If player shoots - set bullet to player projectile style
 	if (mode == false)
 	{
-		b.setTextureRect(sf::IntRect(0, 0, 32, 32));
+		b.setTextureRect(sf::IntRect(0, 32, 32, 32));
 	}
 
 	if (mode == true)
 	{
-		b.setTextureRect(sf::IntRect(0, 0, 32, 32)); //change this to enemy bullet sprite
+		b.setTextureRect(sf::IntRect(0, 32, 32, 32)); //change this to enemy bullet sprite
 	}
 };
 
@@ -62,6 +63,12 @@ void Bullet::_Update(const float& dt) {
 	if (!_fired)
 	{
 		return;
+	}
+
+	//Applying bullet range so after bullet has travelled a distance it will become inactive
+	if (sf::length(startPoint - getPosition()) > _range)
+	{
+		_fired = false;
 	}
 
 	sf::Vector2f delta;
@@ -94,14 +101,12 @@ void Bullet::_Update(const float& dt) {
 				//If player is hit by own bullet - do nothing
 				if (!_mode && e == player)
 				{
-					std::cout << "Player hit by own bullet" << std::endl;
 					continue;
 				}
 
 				//If enemy is hit by own bullet - do nothing
 				if (_mode && e != player)
 				{
-					std::cout << "Enemy hit by own bullet" << std::endl;
 					continue;
 				}
 

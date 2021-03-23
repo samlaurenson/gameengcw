@@ -8,6 +8,7 @@ Enemy::Enemy() {}
 void Enemy::update(double dt)
 {
 	//If enemy and player are alive and the player is within the enemy detection distance, then enemy will shoot at player
+	//Add in if enemy health is less than their health pool (they have taken damage), then start walking towards player and once in range then shoot
 	if (sf::length(player->getPosition() - getPosition()) < _detectionDistance && isAlive() && player->isAlive())
 	{
 		static float firetime = 0.0f;
@@ -15,7 +16,7 @@ void Enemy::update(double dt)
 		if (firetime <= 0)
 		{
 			firetime = getFirerate();
-			Bullet::Fire(getPosition(), true, player->getPosition(), getDamage());
+			Bullet::Fire(getPosition(), true, player->getPosition(), getDamage(), getBulletRange());
 
 		}
 		std::cout << "Player detected by enemy" << std::endl;
@@ -49,4 +50,14 @@ void Enemy::setDetectionDistance(float distance)
 float Enemy::getDetectionDistance() const
 {
 	return _detectionDistance;
+}
+
+void Entity::setBulletRange(float range)
+{
+	_bulletRange = range;
+}
+
+float Entity::getBulletRange() const
+{
+	return _bulletRange;
 }

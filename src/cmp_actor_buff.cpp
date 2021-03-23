@@ -1,4 +1,5 @@
 #include "cmp_actor_buff.h"
+#include "playergui.h"
 
 ActorBuffComponent::ActorBuffComponent(Entity* p) : Component(p) {}
 
@@ -14,7 +15,15 @@ void ActorBuffComponent::applyBuff(std::shared_ptr<Buff> buff) const
 	if (buff->buff == Buff::ATKSPEED)
 	{
 		_parent->setFirerate(_parent->getFirerate() * buff->modifier);
+		PlayerGUI::activateAtkSpeedBuff();
 		std::cout << "New firerate: " << _parent->getFirerate() << std::endl;
+	}
+
+	if (buff->buff == Buff::ATKDMG)
+	{
+		_parent->setDamage(_parent->getDamage() * buff->modifier);
+		PlayerGUI::activateAtkDamageBuff();
+		std::cout << "New Damage: " << _parent->getDamage() << std::endl;
 	}
 }
 

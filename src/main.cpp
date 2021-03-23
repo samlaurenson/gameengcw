@@ -55,7 +55,7 @@ void Update(sf::RenderWindow& window)
         {
             firetime = player->getFirerate();
             sf::Vector2f mousepos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-            Bullet::Fire(player->getPosition(), false, mousepos, player->getDamage());
+            Bullet::Fire(player->getPosition(), false, mousepos, player->getDamage(), player->getBulletRange());
         }
     }
 }
