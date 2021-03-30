@@ -32,7 +32,7 @@ void Bullet::Render(sf::RenderWindow& window)
 	}
 };
 
-void Bullet::Fire(const sf::Vector2f& pos, const bool mode, sf::Vector2f direction, int damage, float range)
+void Bullet::Fire(const sf::Vector2f& pos, const bool mode, sf::Vector2f direction, const int damage, const float range)
 {
 	Bullet& b = bullets[++bulletPointer]; //getting memory address for object in bullets array
 	b._mode = mode;
@@ -57,7 +57,6 @@ void Bullet::Fire(const sf::Vector2f& pos, const bool mode, sf::Vector2f directi
 	}
 };
 
-//TODO: Add damage field to entity so that input for bullet fire will be player->getDamage() (for example) so that modifiers to damage will be easier to implement
 void Bullet::_Update(const float& dt) {
 	//If the bullet is not fired - then don't do anything. This is required to stop the LevelSystem compaining when it is trying to find the tile the bullet is on when it hasn't been shot yet
 	if (!_fired)

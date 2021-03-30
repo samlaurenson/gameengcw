@@ -9,6 +9,7 @@
 #include "enemy.h"
 #include "cmp_actor_buff.h"
 #include "playergui.h"
+#include "cmp_enemy_movement.h"
 
 std::shared_ptr<Entity> player;
 std::vector<std::shared_ptr<Entity>> enemies;
@@ -61,6 +62,7 @@ void DungeonScene::load()
 	b->modifier = 0.8f; //0.8f is a 20% increase to player attack speed
 	en->addBuffDrop(b);
 	en->setFirerate(0.6f);
+	en->addComponent<EnemyMovementComponent>();
 
 	//add component for enemy movement and detection radius for when the enemy will start firing at enemy
 	auto model = en->addComponent<ActorModelComponent>();
@@ -76,6 +78,7 @@ void DungeonScene::load()
 	en2->setDetectionDistance(350.f);
 	en2->setDamage(25);
 	en2->setRandomSpawnType(true);
+	en2->addComponent<EnemyMovementComponent>();
 	auto b2 = std::make_shared<Buff>();
 	b2->buff = Buff::ATKDMG;
 	b2->modifier = 2.f; //2.f is double the current player damage - default player damage is 25 so when buff applied will be 50

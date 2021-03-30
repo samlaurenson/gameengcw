@@ -6,6 +6,7 @@ class Enemy : public Entity
 protected:
 	float _detectionDistance;
 	std::shared_ptr<Buff> _buffDrop;
+	bool _playerSeen = false;
 public:
 	Enemy();
 	virtual ~Enemy() = default;

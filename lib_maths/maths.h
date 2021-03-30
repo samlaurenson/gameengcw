@@ -20,8 +20,8 @@ namespace sf {
 		double l = length(v);
 		if (l != 0)
 		{
-			double magV = sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
-			vector = (v.x/magV, v.y/magV, v.z/magV);
+			double magV = sqrt(v.x * v.x + v.y * v.y);
+			vector = sf::Vector2<T>(v.x/magV, v.y/magV);
 		}
 		return vector;
 	}
