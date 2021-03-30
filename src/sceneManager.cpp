@@ -18,6 +18,7 @@ std::shared_ptr<Entity> boss;
 std::shared_ptr<Scene> activeScene;
 std::shared_ptr<Scene> dungeonScene;
 std::shared_ptr<Scene> bossScene;
+std::shared_ptr<Scene> menuScene;
 
 sf::Clock timer;
 
@@ -210,4 +211,47 @@ void BossScene::render(sf::RenderWindow& window)
 	Bullet::Render(window);
 	Scene::render(window);
 	PlayerGUI::render(window);
+}
+
+void MenuScene::load()
+{
+	//Set title
+	font.loadFromFile("res/fonts/Roboto-Medium.ttf");
+	title.setFont(font);
+	title.setFillColor(sf::Color::White);
+	title.setCharacterSize(36);
+	title.setPosition(gameWidth / 3 + 200, gameHeight / 3);
+	title.setString("Trollstigen");
+
+	//Set play button
+	playText.setFont(font);
+	playText.setFillColor(sf::Color::White);
+	playText.setCharacterSize(28);
+	playText.setPosition(gameWidth / 10, gameHeight / 2);
+	playText.setString("Play Game");
+}
+
+void MenuScene::update(double dt)
+{
+	//Mouse events for play "button" - Hover over button and clicking on button
+	if (mousepos.x > playText.getPosition().x && mousepos.x < playText.getPosition().x + 200 && mousepos.y > playText.getPosition().y && mousepos.y < playText.getPosition().y + 50)
+	{
+		playText.setFillColor(sf::Color::Yellow);
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		{
+			activeScene = dungeonScene;
+		}
+	}
+	else {
+		playText.setFillColor(sf::Color::White);
+	}
+
+	Scene::update(dt);
+}
+
+void MenuScene::render(sf::RenderWindow& window)
+{
+	window.draw(title);
+	window.draw(playText);
+	Scene::render(window);
 }

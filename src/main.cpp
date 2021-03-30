@@ -8,7 +8,7 @@ int gameHeight = 1080;
 int gameWidth = 1920;
 
 sf::Texture spritesheet;
-
+sf::Vector2f mousepos;
 sf::View Camera;
 
 void Load()
@@ -19,18 +19,22 @@ void Load()
     }
 
     //Loading scene assets
+    menuScene.reset(new MenuScene());
     dungeonScene.reset(new DungeonScene());
     bossScene.reset(new BossScene());
+    menuScene->load();
     dungeonScene->load();
     bossScene->load();
 
-    activeScene = dungeonScene;
+    activeScene = menuScene;
 }
 
 void Update(sf::RenderWindow& window)
 {
     static sf::Clock clock;
     float dt = clock.restart().asSeconds();
+
+    mousepos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
     activeScene->update(dt);
 
@@ -47,14 +51,13 @@ void Update(sf::RenderWindow& window)
             return;
         }
 
-        static float firetime = 0.0f;
+        static float firetime = 1.0f;
         firetime -= dt;
 
         //Should probably put this in a better place but will work here for now since a RenderWindow is required
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && firetime <= 0)
         {
             firetime = player->getFirerate();
-            sf::Vector2f mousepos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
             Bullet::Fire(player->getPosition(), false, mousepos, player->getDamage(), player->getBulletRange());
         }
     }
