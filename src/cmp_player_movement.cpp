@@ -26,18 +26,26 @@ void PlayerMovementComponent::update(double dt)
 		move(sf::Vector2f((_speed * dt), 0));
 	}
 
-	//Not a movement but will be here to keep controls centralised 
-	/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+	//Player control for shooting
+	if (_parent->isAlive())
 	{
-		Bullet::Fire(_parent->getPosition(), false, );
-	}*/
+		//Setting player to dead if they have no health
+		if (_parent->getHealth() <= 0)
+		{
+			_parent->setAlive(false);
+			return;
+		}
 
-	/*if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-	{
-		sf::Vector2i mousepos = sf::Mouse::getPosition(window);
-		Bullet::Fire(_parent->getPosition(), false, mousepos.x, mousepos.y);
-		firetime = 0.7f;
-	}*/
+		static float firetime = 1.0f;
+		firetime -= dt;
+
+		//Should probably put this in a better place but will work here for now since a RenderWindow is required
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && firetime <= 0)
+		{
+			firetime = _parent->getFirerate();
+			Bullet::Fire(_parent->getPosition(), false, mousepos, _parent->getDamage(), _parent->getBulletRange());
+		}
+	}
 
 	ActorMovementComponent::update(dt);
 }

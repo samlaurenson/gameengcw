@@ -37,30 +37,6 @@ void Update(sf::RenderWindow& window)
     mousepos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
     activeScene->update(dt);
-
-
-    //Quick note: May want to have an if statement for the left click to shoot thing for if the active scene is the boss room or dungeon scene if the shoot function will be kept here
-
-    //If statement so that player can only shoot if they are still alive
-    if (player->isAlive())
-    {
-        //Setting player to dead if they have no health
-        if (player->getHealth() <= 0)
-        {
-            player->setAlive(false);
-            return;
-        }
-
-        static float firetime = 1.0f;
-        firetime -= dt;
-
-        //Should probably put this in a better place but will work here for now since a RenderWindow is required
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && firetime <= 0)
-        {
-            firetime = player->getFirerate();
-            Bullet::Fire(player->getPosition(), false, mousepos, player->getDamage(), player->getBulletRange());
-        }
-    }
 }
 
 void Render(sf::RenderWindow& window)
