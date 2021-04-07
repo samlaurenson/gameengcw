@@ -22,9 +22,11 @@ void Load()
     menuScene.reset(new MenuScene());
     dungeonScene.reset(new DungeonScene());
     bossScene.reset(new BossScene());
+    loseScene.reset(new LoseScene());
     menuScene->load();
     dungeonScene->load();
     bossScene->load();
+    loseScene->load();
 
     activeScene = menuScene;
 }
@@ -35,6 +37,15 @@ void Update(sf::RenderWindow& window)
     float dt = clock.restart().asSeconds();
 
     mousepos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+    {
+        activeScene = menuScene;
+
+        //Resetting dungeon and boss scenes so all values are the default values and all entities are alive
+        dungeonScene->restart();
+        bossScene->restart();
+    }
 
     activeScene->update(dt);
 }

@@ -10,7 +10,7 @@ void Enemy::update(double dt)
 {
 	//If enemy and player are alive and the player is within the enemy detection distance, then enemy will shoot at player
 	//Add in if enemy health is less than their health pool (they have taken damage), then start walking towards player and once in range then shoot
-	if ((sf::length(player->getPosition() - getPosition()) < _detectionDistance || _playerSeen) && isAlive() && player->isAlive())
+	if ((sf::length(player->getPosition() - getPosition()) < _detectionDistance) && isAlive() && player->isAlive())
 	{
 		_playerSeen = true; //If player enters enemy detection zone - then enemy will be marked as having seen the player
 
@@ -27,6 +27,14 @@ void Enemy::update(double dt)
 			firetime = getFirerate();
 			Bullet::Fire(getPosition(), true, player->getPosition(), getDamage(), getBulletRange());
 
+		}
+	}
+	else {
+		//Temporary measure to stop enemies from carrying on seen behaviour after game reset
+		_playerSeen = false;
+		if (get_components<EnemyMovementComponent>().size() != 0)
+		{
+			GetCompatibleComponent<EnemyMovementComponent>()[0]->setPath(sf::Vector2f(0,0), sf::Vector2f(0, 0));
 		}
 	}
 

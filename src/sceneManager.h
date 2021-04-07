@@ -8,6 +8,8 @@ extern std::shared_ptr<Scene> activeScene;
 extern std::shared_ptr<Scene> dungeonScene;
 extern std::shared_ptr<Scene> bossScene;
 extern std::shared_ptr<Scene> menuScene;
+extern std::shared_ptr<Scene> loseScene;
+extern std::shared_ptr<Scene> winScene;
 
 extern sf::Clock timer;
 
@@ -20,7 +22,7 @@ public:
 	void update(double dt) override;
 	void render(sf::RenderWindow& window) override;
 	void load() override;
-	void restart();
+	void restart() override;
 };
 
 class BossScene : public Scene {
@@ -32,7 +34,7 @@ public:
 	void update(double dt) override;
 	void render(sf::RenderWindow& window) override;
 	void load() override;
-	void restart();
+	void restart() override;
 };
 
 class MenuScene : public Scene {
@@ -42,6 +44,17 @@ private:
 	sf::Text playText;
 public:
 	MenuScene() = default;
+	void update(double dt) override;
+	void render(sf::RenderWindow& window) override;
+	void load() override;
+};
+
+class LoseScene : public Scene {
+private:
+	sf::Font font;
+	sf::Text loseText;
+public:
+	LoseScene() = default;
 	void update(double dt) override;
 	void render(sf::RenderWindow& window) override;
 	void load() override;

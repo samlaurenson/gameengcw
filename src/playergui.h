@@ -25,4 +25,5 @@ public:
 
 	static void update(const double& dt);
 	static void render(sf::RenderWindow& window);
+	static void reset();
 };

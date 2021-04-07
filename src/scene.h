@@ -9,6 +9,7 @@ public:
 	virtual void update(double dt);
 	virtual void render(sf::RenderWindow& window);
 	virtual void load() = 0;
+	virtual void restart();
 	std::vector<std::shared_ptr<Entity>>& getEnts();
 
 protected:

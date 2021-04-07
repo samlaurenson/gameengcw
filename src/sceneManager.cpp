@@ -19,6 +19,8 @@ std::shared_ptr<Scene> activeScene;
 std::shared_ptr<Scene> dungeonScene;
 std::shared_ptr<Scene> bossScene;
 std::shared_ptr<Scene> menuScene;
+std::shared_ptr<Scene> loseScene;
+std::shared_ptr<Scene> winScene;
 
 sf::Clock timer;
 
@@ -27,6 +29,8 @@ void Scene::render(sf::RenderWindow& window) { _ents.render(window); }
 std::vector<std::shared_ptr<Entity>>& Scene::getEnts() { return _ents.list; }
 
 void Scene::update(double dt) { _ents.update(dt); }
+
+void Scene::restart() { }
 
 void DungeonScene::load()
 {
@@ -102,11 +106,16 @@ void DungeonScene::update(double dt)
 {
 	//Using this to check transition between dungeon scene and boss scene (i.e. all bullets clear off screen and player and boss load)
 	//Replace this with if the user runs over the boss room entrance
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
 		activeScene = bossScene;
 		Bullet::clear();
 		//restart();
+	}
+
+	if (!player->isAlive())
+	{
+		activeScene = loseScene;
 	}
 
 	Scene::update(dt);
@@ -127,11 +136,20 @@ void DungeonScene::restart()
 {
 	srand((int)time(0)); //Using time as seed in srand to make randomly generated numbers more random
 
+	//Clearing scene of bullets and resetting the GUI
+	Bullet::clear();
+	PlayerGUI::reset();
+
 	//Also reset player and enemy health here for when scenes are restarted
 	player->setHealth(player->getHealthPool());
+	player->setAlive(true);
 	//player->setFirerate(0.4f);
 	player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
 	player->GetCompatibleComponent<ActorMovementComponent>()[0]->setSpeed(150.f);
+
+	//Setting player damage and fire rate to default in case they picked up any buffs
+	player->setFirerate(0.4f);
+	player->setDamage(25);
 
 	auto enemyTiles = ls::findTiles(ls::ENEMY); //create new tile type for ENEMYRANDOM
 
@@ -200,6 +218,11 @@ void BossScene::update(double dt)
 		std::cout << "Completed dungeon in: " << timeCompleted << std::endl;
 	}
 
+	if (!player->isAlive())
+	{
+		activeScene = loseScene;
+	}
+
 	Bullet::Update(dt);
 	Scene::update(dt);
 	PlayerGUI::update(dt);
@@ -213,6 +236,12 @@ void BossScene::render(sf::RenderWindow& window)
 	PlayerGUI::render(window);
 }
 
+void BossScene::restart()
+{
+	boss->setHealth(boss->getHealthPool());
+	boss->setAlive(true);
+}
+
 void MenuScene::load()
 {
 	//Set title
@@ -220,7 +249,7 @@ void MenuScene::load()
 	title.setFont(font);
 	title.setFillColor(sf::Color::White);
 	title.setCharacterSize(36);
-	title.setPosition(gameWidth / 3 + 200, gameHeight / 3);
+	title.setPosition(gameWidth / 3, gameHeight / 3);
 	title.setString("Trollstigen");
 
 	//Set play button
@@ -253,5 +282,27 @@ void MenuScene::render(sf::RenderWindow& window)
 {
 	window.draw(title);
 	window.draw(playText);
+	Scene::render(window);
+}
+
+void LoseScene::load()
+{
+	//Set lose text
+	font.loadFromFile("res/fonts/Roboto-Medium.ttf");
+	loseText.setFont(font);
+	loseText.setFillColor(sf::Color::White);
+	loseText.setCharacterSize(36);
+	loseText.setPosition(gameWidth / 2 - 75, gameHeight / 2);
+	loseText.setString("Oh dear, you died.");
+}
+
+void LoseScene::update(double dt)
+{
+	Scene::update(dt);
+}
+
+void LoseScene::render(sf::RenderWindow& window)
+{
+	window.draw(loseText);
 	Scene::render(window);
 }

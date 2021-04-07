@@ -72,15 +72,9 @@ void PlayerGUI::update(const double& dt)
 		_remainingHP.setString(std::to_string(player->getHealth()) + "/" + std::to_string(player->getHealthPool()));
 	}
 
-	//If the user has the attack speed buff - then show the attack speed buff in the GUI
-	if (_atkSpeedBool)
-	{
-		showAtkSpeedBuff();
-	}
-	if (_atkDamageBool)
-	{
-		showAtkDamageBuff();
-	}
+	//display buffs
+	showAtkDamageBuff();
+	showAtkSpeedBuff();
 }
 
 void PlayerGUI::render(sf::RenderWindow& window)
@@ -88,9 +82,17 @@ void PlayerGUI::render(sf::RenderWindow& window)
 	//draw the hp bar
 	window.draw(_hpBar);
 	window.draw(_remainingHP);
-	window.draw(_atkSpeedBuff);
-	window.draw(_atkDamageBuff);
 	window.draw(_timeSpent);
+
+	if (_atkSpeedBool)
+	{
+		window.draw(_atkSpeedBuff);
+	}
+
+	if (_atkDamageBool)
+	{
+		window.draw(_atkDamageBuff);
+	}
 }
 
 //using this so that if the player has the attack speed buff and enters another scene - the attack speed buff will not disappear
@@ -103,4 +105,10 @@ void PlayerGUI::activateAtkSpeedBuff()
 void PlayerGUI::activateAtkDamageBuff()
 {
 	_atkDamageBool = true;
+}
+
+void PlayerGUI::reset()
+{
+	_atkSpeedBool = false;
+	_atkDamageBool = false;
 }
