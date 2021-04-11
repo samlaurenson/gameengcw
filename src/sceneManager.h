@@ -10,6 +10,7 @@ extern std::shared_ptr<Scene> bossScene;
 extern std::shared_ptr<Scene> menuScene;
 extern std::shared_ptr<Scene> loseScene;
 extern std::shared_ptr<Scene> winScene;
+extern std::shared_ptr<Scene> leaderboardScene;
 
 extern sf::Clock timer;
 
@@ -42,6 +43,7 @@ private:
 	sf::Font font;
 	sf::Text title;
 	sf::Text playText;
+	sf::Text leaderboardButton;
 public:
 	MenuScene() = default;
 	void update(double dt) override;
@@ -57,5 +59,32 @@ public:
 	LoseScene() = default;
 	void update(double dt) override;
 	void render(sf::RenderWindow& window) override;
+	void load() override;
+};
+
+class VictoryScene : public Scene {
+private:
+	sf::Font font;
+	sf::Text winText;
+	sf::Text timeTaken;
+	static sf::String playerInput;
+	sf::Text playerText;
+	sf::Text submitButton;
+public:
+	VictoryScene() = default;
+	void update(double dt) override;
+	void render(sf::RenderWindow & window) override;
+	void load() override;
+	void restart() override;
+	static void appendText(sf::String input);
+};
+
+class LeaderboardScene : public Scene {
+private:
+	sf::Font font;
+public:
+	LeaderboardScene() = default;
+	void update(double dt) override;
+	void render(sf::RenderWindow & window) override;
 	void load() override;
 };

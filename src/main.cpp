@@ -11,6 +11,7 @@ sf::Texture spritesheet;
 sf::Vector2f mousepos;
 sf::View Camera;
 
+
 void Load()
 {
     if (!spritesheet.loadFromFile("res/img/spritesheetEntity2.png"))
@@ -23,10 +24,14 @@ void Load()
     dungeonScene.reset(new DungeonScene());
     bossScene.reset(new BossScene());
     loseScene.reset(new LoseScene());
+    winScene.reset(new VictoryScene());
+    leaderboardScene.reset(new LeaderboardScene());
     menuScene->load();
     dungeonScene->load();
     bossScene->load();
     loseScene->load();
+    winScene->load();
+    leaderboardScene->load();
 
     activeScene = menuScene;
 }
@@ -45,6 +50,9 @@ void Update(sf::RenderWindow& window)
         //Resetting dungeon and boss scenes so all values are the default values and all entities are alive
         dungeonScene->restart();
         bossScene->restart();
+
+        //resetting victory screen
+        winScene->restart();
     }
 
     activeScene->update(dt);
@@ -59,6 +67,14 @@ void Render(sf::RenderWindow& window)
         {
             window.close();
             return;
+        }
+
+        //Would be useful to add backspace in here
+        //Used to get the player input when player is on the victory screen
+        if (event.type == sf::Event::TextEntered && activeScene == winScene)
+        {
+            //nameInput += event.text.unicode;
+            VictoryScene::appendText(event.text.unicode);
         }
     }
 

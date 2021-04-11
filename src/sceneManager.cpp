@@ -10,6 +10,7 @@
 #include "cmp_actor_buff.h"
 #include "playergui.h"
 #include "cmp_enemy_movement.h"
+#include "scores.h"
 
 std::shared_ptr<Entity> player;
 std::vector<std::shared_ptr<Entity>> enemies;
@@ -21,8 +22,15 @@ std::shared_ptr<Scene> bossScene;
 std::shared_ptr<Scene> menuScene;
 std::shared_ptr<Scene> loseScene;
 std::shared_ptr<Scene> winScene;
+std::shared_ptr<Scene> leaderboardScene;
+
+sf::String VictoryScene::playerInput;
+
+std::vector<Scores> leaderboard;
 
 sf::Clock timer;
+bool gotTime = false; //Variable to flag whether time has been obtained or not
+float timeCompleted;
 
 void Scene::render(sf::RenderWindow& window) { _ents.render(window); }
 
@@ -30,7 +38,7 @@ std::vector<std::shared_ptr<Entity>>& Scene::getEnts() { return _ents.list; }
 
 void Scene::update(double dt) { _ents.update(dt); }
 
-void Scene::restart() { }
+void Scene::restart() { gotTime = false; timeCompleted = 0; }
 
 void DungeonScene::load()
 {
@@ -173,6 +181,7 @@ void DungeonScene::restart()
 			enemies[i]->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[i]));
 		}
 	}
+	Scene::restart();
 }
 
 void BossScene::load()
@@ -182,7 +191,7 @@ void BossScene::load()
 	//may be cool to add actor buff component to boss where they have a higher fire rate when they reach 50% health
 	//so in update function - when boss health is less than 50% of its original health - apply attack speed buff
 	auto b = std::make_shared<Enemy>();
-	b->setHealth(2000);
+	b->setHealthPool(20);
 	b->setBulletRange(5000.f);
 	b->setDetectionDistance(1000);
 	b->setFirerate(0.2f);
@@ -194,12 +203,13 @@ void BossScene::load()
 	_ents.list.push_back(b);
 	boss = b;
 
+	restart();
+
 	PlayerGUI::initialiseGUI();
 	ls::loadLevelFile("res/dev_level.txt", 32.f);
 	boss->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]));
 }
 
-bool gotTime = false; //Variable to flag whether time has been obtained or not
 
 void BossScene::update(double dt)
 {
@@ -210,12 +220,15 @@ void BossScene::update(double dt)
 		Bullet::clear();
 	}
 
-	float timeCompleted;
+
 	if (!boss->isAlive() && !gotTime)
 	{
+		//Bullet::clear();
 		gotTime = true;
 		timeCompleted = timer.getElapsedTime().asSeconds();
 		std::cout << "Completed dungeon in: " << timeCompleted << std::endl;
+
+		activeScene = winScene; //After boss has been defeated - player has won
 	}
 
 	if (!player->isAlive())
@@ -258,6 +271,13 @@ void MenuScene::load()
 	playText.setCharacterSize(28);
 	playText.setPosition(gameWidth / 10, gameHeight / 2);
 	playText.setString("Play Game");
+
+	//Set leaderboard button
+	leaderboardButton.setFont(font);
+	leaderboardButton.setFillColor(sf::Color::White);
+	leaderboardButton.setCharacterSize(28);
+	leaderboardButton.setPosition(gameWidth / 10, gameHeight / 1.5);
+	leaderboardButton.setString("Leaderboards");
 }
 
 void MenuScene::update(double dt)
@@ -275,6 +295,18 @@ void MenuScene::update(double dt)
 		playText.setFillColor(sf::Color::White);
 	}
 
+	if (mousepos.x > leaderboardButton.getPosition().x && mousepos.x < leaderboardButton.getPosition().x + 200 && mousepos.y > leaderboardButton.getPosition().y && mousepos.y < leaderboardButton.getPosition().y + 50)
+	{
+		leaderboardButton.setFillColor(sf::Color::Yellow);
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		{
+			activeScene = leaderboardScene;
+		}
+	}
+	else {
+		leaderboardButton.setFillColor(sf::Color::White);
+	}
+
 	Scene::update(dt);
 }
 
@@ -282,6 +314,7 @@ void MenuScene::render(sf::RenderWindow& window)
 {
 	window.draw(title);
 	window.draw(playText);
+	window.draw(leaderboardButton);
 	Scene::render(window);
 }
 
@@ -304,5 +337,104 @@ void LoseScene::update(double dt)
 void LoseScene::render(sf::RenderWindow& window)
 {
 	window.draw(loseText);
+	Scene::render(window);
+}
+
+void VictoryScene::load()
+{
+	//Text to say that player has won
+	font.loadFromFile("res/fonts/Roboto-Medium.ttf");
+	winText.setFont(font);
+	winText.setFillColor(sf::Color::White);
+	winText.setCharacterSize(36);
+	winText.setPosition(gameWidth / 2 - 75, gameHeight / 3);
+	winText.setString("Well Done!\n You Defeated the Boss!");
+
+	//Text to show time user spent playing
+	timeTaken.setFont(font);
+	timeTaken.setFillColor(sf::Color::White);
+	timeTaken.setCharacterSize(36);
+	timeTaken.setPosition(gameWidth / 2 - 75, gameHeight / 2);
+
+	//Setting up text to show player input
+	playerText.setFont(font);
+	playerText.setFillColor(sf::Color::White);
+	playerText.setCharacterSize(36);
+	playerText.setPosition(gameWidth / 2 - 75, gameHeight / 1.25);
+	playerText.setString("Enter Name: ");
+
+	//Setting up submit button
+	submitButton.setFont(font);
+	submitButton.setFillColor(sf::Color::White);
+	submitButton.setCharacterSize(36);
+	submitButton.setPosition(gameWidth / 2 - 75, gameHeight);
+	submitButton.setString("Submit");
+}
+
+void VictoryScene::update(double dt)
+{
+	timeTaken.setString("Time Taken: " + std::to_string(timeCompleted));
+
+	playerText.setString("Enter Name: " + playerInput);
+
+	//Need if for when user presess "submit" button to save the scores and then go back to menu page
+	if (mousepos.x > submitButton.getPosition().x && mousepos.x < submitButton.getPosition().x + 200 && mousepos.y > submitButton.getPosition().y && mousepos.y < submitButton.getPosition().y + 50)
+	{
+		submitButton.setFillColor(sf::Color::Yellow);
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		{
+			Scores newScore;
+			newScore.setTime(timeCompleted);
+			newScore.setPlayerName(playerInput);
+
+			leaderboard.push_back(newScore);
+			Scores::saveScoresToFile(leaderboard);
+
+			activeScene = menuScene;
+		}
+	}
+	else {
+		submitButton.setFillColor(sf::Color::White);
+	}
+
+	Scene::update(dt);
+}
+
+void VictoryScene::render(sf::RenderWindow& window)
+{
+	window.draw(winText);
+	window.draw(timeTaken);
+	window.draw(playerText);
+	window.draw(submitButton);
+	Scene::render(window);
+}
+
+//Function that will add characters to a string when user provides keyboard input on victory screen
+void VictoryScene::appendText(sf::String inputText)
+{
+	playerInput += inputText;
+}
+
+void VictoryScene::restart()
+{
+	playerInput = "";
+	playerText.setString("Enter Name: ");
+}
+
+void LeaderboardScene::load()
+{
+	//Read from scores file and load scores in to the vector
+	//Use vector to create the text that will be displayed as the leaderboard
+	leaderboard = Scores::loadScoresFromFile("res/leaderboard.scores");
+}
+
+void LeaderboardScene::update(double dt)
+{
+	//load();
+	Scene::update(dt);
+}
+
+void LeaderboardScene::render(sf::RenderWindow& window)
+{
 	Scene::render(window);
 }
