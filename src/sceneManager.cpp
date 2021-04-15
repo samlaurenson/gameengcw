@@ -10,7 +10,6 @@
 #include "cmp_actor_buff.h"
 #include "playergui.h"
 #include "cmp_enemy_movement.h"
-#include "scores.h"
 
 std::shared_ptr<Entity> player;
 std::vector<std::shared_ptr<Entity>> enemies;
@@ -24,9 +23,12 @@ std::shared_ptr<Scene> loseScene;
 std::shared_ptr<Scene> winScene;
 std::shared_ptr<Scene> leaderboardScene;
 
-sf::String VictoryScene::playerInput;
+std::string VictoryScene::playerInput;
 
-std::vector<Scores> leaderboard;
+//Filling array with 10 Scores objects
+std::vector<Scores> leaderboard(10, Scores());
+
+std::string LeaderboardScene::path;
 
 sf::Clock timer;
 bool gotTime = false; //Variable to flag whether time has been obtained or not
@@ -300,6 +302,7 @@ void MenuScene::update(double dt)
 		leaderboardButton.setFillColor(sf::Color::Yellow);
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		{
+			leaderboardScene->restart();
 			activeScene = leaderboardScene;
 		}
 	}
@@ -387,10 +390,37 @@ void VictoryScene::update(double dt)
 			newScore.setTime(timeCompleted);
 			newScore.setPlayerName(playerInput);
 
-			leaderboard.push_back(newScore);
-			Scores::saveScoresToFile(leaderboard);
+			//Insert into vector where time is greater than another time
+			for (int i = 0; i < leaderboard.size(); i++)
+			{
+				if (newScore.getTime() < leaderboard[i].getTime() || leaderboard[i].getTime() == 0.f)
+				{
+					//Should insert the score in correct place depending on if time is faster
+					leaderboard.insert(leaderboard.begin() + i, newScore);
+
+					//If leaderboard already has 10 entries, then remove the last one
+					if (leaderboard.size() == 10)
+					{
+						leaderboard.erase(leaderboard.begin() + leaderboard.size() - 1);
+					}
+					break;
+				}
+			}
+			//leaderboard.push_back(newScore);
+
+			Scores::saveScoresToFile(leaderboard, LeaderboardScene::getLeaderboardFilePath());
+			leaderboardScene->restart();
+
+			//LeaderboardScene::buildLeaderboard(leaderboard);
 
 			activeScene = menuScene;
+
+			//Resetting dungeon and boss scenes so all values are the default values and all entities are alive
+			dungeonScene->restart();
+			bossScene->restart();
+
+			//resetting victory screen
+			winScene->restart();
 		}
 	}
 	else {
@@ -423,9 +453,14 @@ void VictoryScene::restart()
 
 void LeaderboardScene::load()
 {
+	//Setting path to leaderboard
+	LeaderboardScene::setLeaderboardFilePath("res/leaderboard.scores");
+
 	//Read from scores file and load scores in to the vector
 	//Use vector to create the text that will be displayed as the leaderboard
-	leaderboard = Scores::loadScoresFromFile("res/leaderboard.scores");
+	leaderboard = Scores::loadScoresFromFile(getLeaderboardFilePath());
+
+	//buildLeaderboard(leaderboard);
 }
 
 void LeaderboardScene::update(double dt)
@@ -436,5 +471,40 @@ void LeaderboardScene::update(double dt)
 
 void LeaderboardScene::render(sf::RenderWindow& window)
 {
+	window.draw(leaderboardText);
 	Scene::render(window);
+}
+
+void LeaderboardScene::setLeaderboardFilePath(std::string _path)
+{
+	path = _path;
+}
+
+std::string LeaderboardScene::getLeaderboardFilePath()
+{
+	return path;
+}
+
+void LeaderboardScene::restart()
+{
+	font.loadFromFile("res/fonts/Roboto-Medium.ttf");
+	leaderboardText.setFont(font);
+	leaderboardText.setFillColor(sf::Color::White);
+	leaderboardText.setCharacterSize(36);
+	leaderboardText.setPosition(gameWidth / 2, gameHeight / 2);
+
+	std::string resultText = "";
+
+	for (int i = 0; i < leaderboard.size(); i++)
+	{
+		if (leaderboard[i].getTime() != 0.f)
+		{
+			resultText.append(std::to_string(i + 1) + ".\t" + leaderboard[i].getPlayerName() + "\t" + std::to_string(leaderboard[i].getTime()) + "\n");
+		}
+		else {
+			resultText.append(std::to_string(i + 1) + ".\t" + "...." + "\t" + "...." + "\n");
+		}
+	}
+
+	leaderboardText.setString(resultText);
 }

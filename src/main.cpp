@@ -33,6 +33,10 @@ void Load()
     winScene->load();
     leaderboardScene->load();
 
+
+    //Setting path for leaderboard
+    //LeaderboardScene::setLeaderboardFilePath("res/leaderboard.scores");
+
     activeScene = menuScene;
 }
 

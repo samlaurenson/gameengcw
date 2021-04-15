@@ -1,4 +1,5 @@
 #include "scene.h"
+#include "scores.h"
 
 extern std::shared_ptr<Entity> player;
 extern std::vector<std::shared_ptr<Entity>> enemies;
@@ -67,7 +68,7 @@ private:
 	sf::Font font;
 	sf::Text winText;
 	sf::Text timeTaken;
-	static sf::String playerInput;
+	static std::string playerInput;
 	sf::Text playerText;
 	sf::Text submitButton;
 public:
@@ -81,10 +82,15 @@ public:
 
 class LeaderboardScene : public Scene {
 private:
+	static std::string path;
 	sf::Font font;
+	sf::Text leaderboardText;
 public:
 	LeaderboardScene() = default;
 	void update(double dt) override;
 	void render(sf::RenderWindow & window) override;
 	void load() override;
+	void restart() override;
+	static void setLeaderboardFilePath(std::string path);
+	static std::string getLeaderboardFilePath();
 };

@@ -12,5 +12,5 @@ public:
 	sf::String getPlayerName();
 
 	static std::vector<Scores> loadScoresFromFile(std::string path);
-	static void saveScoresToFile(std::vector<Scores> scores);
+	static void saveScoresToFile(std::vector<Scores> scores, std::string path);
 };
