@@ -456,22 +456,55 @@ void LeaderboardScene::load()
 	//Setting path to leaderboard
 	LeaderboardScene::setLeaderboardFilePath("res/leaderboard.scores");
 
-	//Read from scores file and load scores in to the vector
-	//Use vector to create the text that will be displayed as the leaderboard
-	leaderboard = Scores::loadScoresFromFile(getLeaderboardFilePath());
+	font.loadFromFile("res/fonts/Roboto-Medium.ttf");
 
-	//buildLeaderboard(leaderboard);
+	//Setting leaderboard title
+	sceneTitle.setFont(font);
+	sceneTitle.setFillColor(sf::Color::White);
+	sceneTitle.setCharacterSize(36);
+	sceneTitle.setPosition(gameWidth / 3, gameHeight / 3);
+	sceneTitle.setString("Top 10 Leaderboard");
+
+	//Setting leaderboard font
+	leaderboardText.setFont(font);
+	leaderboardText.setFillColor(sf::Color::White);
+	leaderboardText.setCharacterSize(36);
+	leaderboardText.setPosition(gameWidth / 3, gameHeight / 2);
+
+	//Setting back button that will take user back to main menu
+	backButton.setFont(font);
+	backButton.setFillColor(sf::Color::White);
+	backButton.setCharacterSize(28);
+	backButton.setPosition(gameWidth / 15, gameHeight / 0.9);
+	backButton.setString("< Back");
+
+	//Reading in scores from file and adding them to the leaderboard vector
+	leaderboard = Scores::loadScoresFromFile(getLeaderboardFilePath());
 }
 
 void LeaderboardScene::update(double dt)
 {
-	//load();
+	//Creating event that will highlight button when mouse is hovering over it
+	if (mousepos.x > backButton.getPosition().x && mousepos.x < backButton.getPosition().x + 200 && mousepos.y > backButton.getPosition().y && mousepos.y < backButton.getPosition().y + 50)
+	{
+		backButton.setFillColor(sf::Color::Yellow);
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		{
+			activeScene = menuScene;
+		}
+	}
+	else {
+		backButton.setFillColor(sf::Color::White);
+	}
+
 	Scene::update(dt);
 }
 
 void LeaderboardScene::render(sf::RenderWindow& window)
 {
+	window.draw(sceneTitle);
 	window.draw(leaderboardText);
+	window.draw(backButton);
 	Scene::render(window);
 }
 
@@ -487,12 +520,6 @@ std::string LeaderboardScene::getLeaderboardFilePath()
 
 void LeaderboardScene::restart()
 {
-	font.loadFromFile("res/fonts/Roboto-Medium.ttf");
-	leaderboardText.setFont(font);
-	leaderboardText.setFillColor(sf::Color::White);
-	leaderboardText.setCharacterSize(36);
-	leaderboardText.setPosition(gameWidth / 2, gameHeight / 2);
-
 	std::string resultText = "";
 
 	for (int i = 0; i < leaderboard.size(); i++)

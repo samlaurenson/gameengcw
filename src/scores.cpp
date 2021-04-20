@@ -28,12 +28,12 @@ std::vector<Scores> Scores::loadScoresFromFile(std::string _path)
 	std::vector<Scores> returnScores(10);
 	std::string line;
 	std::ifstream path(_path);
-	int iterator = 0; //Using this iterator to ensure that no more than 10 scores are loaded in
+	int numOfScores = 0; //Using this iterator to ensure that no more than 10 scores are loaded in
 
-	while (getline(path, line) && iterator < 10)
+	while (getline(path, line) && numOfScores < 10)
 	{
 		Scores newScore;
-		int increment = 0; //0 = time, 1 = player name
+		int increment = 0; //0 = time, 1 = player name -- iterator to go over the elements in the file that make a score
 		std::stringstream ss(line);
 		while (getline(ss, line, ','))
 		{
@@ -48,13 +48,11 @@ std::vector<Scores> Scores::loadScoresFromFile(std::string _path)
 
 			increment++;
 		}
-
-		//returnScores.push_back(newScore);
-		returnScores[iterator] = newScore;
-		iterator++;
+		
+		//Setting index in the vector to the loaded in score
+		returnScores[numOfScores] = newScore;
+		numOfScores++;
 	}
-	//std::cout << returnScores[0].getPlayerName().toAnsiString() << std::endl;
-	//std::cout << returnScores[0].getTime() << std::endl;
 
 	return returnScores;
 }

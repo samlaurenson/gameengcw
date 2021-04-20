@@ -84,7 +84,9 @@ class LeaderboardScene : public Scene {
 private:
 	static std::string path;
 	sf::Font font;
+	sf::Text sceneTitle;
 	sf::Text leaderboardText;
+	sf::Text backButton;
 public:
 	LeaderboardScene() = default;
 	void update(double dt) override;
