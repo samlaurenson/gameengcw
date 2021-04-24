@@ -12,7 +12,7 @@ Vector2f LevelSystem::_offset(0.0f, 0.0f);
 float LevelSystem::_tileSize(100.f);
 vector<std::unique_ptr<sf::RectangleShape>> LevelSystem::_sprites;
 
-std::map<LevelSystem::TILE, sf::Color> LevelSystem::_colours{ {WALL, Color::White}, {END, Color::Red} };
+std::map<LevelSystem::TILE, sf::Color> LevelSystem::_colours{ {WALL, Color::White}, {RANDOMBOSSSPAWN, Color::Red} };
 
 sf::Color LevelSystem::getColor(LevelSystem::TILE t) 
 {
@@ -67,13 +67,13 @@ void LevelSystem::loadLevelFile(const std::string& path, float tileSize)
 			temp_tiles.push_back(START);
 			break;
 		case 'e':
-			temp_tiles.push_back(END);
+			temp_tiles.push_back(RANDOMBOSSSPAWN);
 			break;
-		case ' ':
+		case '.':
 			temp_tiles.push_back(EMPTY);
 			break;
 		case '+':
-			temp_tiles.push_back(WAYPOINT);
+			temp_tiles.push_back(RANDOMENEMY);
 			break;
 		case 'n':
 			temp_tiles.push_back(ENEMY);

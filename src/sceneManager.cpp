@@ -107,7 +107,7 @@ void DungeonScene::load()
 
 
 
-	ls::loadLevelFile("res/dev_level.txt", 32.f);
+	ls::loadLevelFile("res/lvl_map.txt", 32.f);
 	PlayerGUI::initialiseGUI();
 	restart();
 }
@@ -208,7 +208,7 @@ void BossScene::load()
 	restart();
 
 	PlayerGUI::initialiseGUI();
-	ls::loadLevelFile("res/dev_level.txt", 32.f);
+	ls::loadLevelFile("res/lvl_map.txt", 32.f);
 	boss->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]));
 }
 
@@ -271,6 +271,8 @@ void MenuScene::load()
 	playText.setFont(font);
 	playText.setFillColor(sf::Color::White);
 	playText.setCharacterSize(28);
+	playText.setOrigin(playText.getGlobalBounds().left + round(playText.getGlobalBounds().width / 2),
+		playText.getGlobalBounds().top + round(playText.getGlobalBounds().height / 2));
 	playText.setPosition(gameWidth / 10, gameHeight / 2);
 	playText.setString("Play Game");
 

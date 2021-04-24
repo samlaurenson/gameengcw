@@ -87,7 +87,10 @@ void Render(sf::RenderWindow& window)
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(gameWidth, gameHeight), "Trollstigen");
+    sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
+
+    //sf::RenderWindow window(sf::VideoMode(gameWidth, gameHeight), "Trollstigen");
+    sf::RenderWindow window(sf::VideoMode(gameWidth, gameHeight, desktop.bitsPerPixel), "Trollstigen");
     Load();
     while (window.isOpen())
     {
