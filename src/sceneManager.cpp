@@ -107,7 +107,7 @@ void DungeonScene::load()
 
 
 
-	ls::loadLevelFile("res/lvl_map.txt", 32.f);
+	ls::loadLevelFile("res/dev_level.txt", 32.f);
 	PlayerGUI::initialiseGUI();
 	restart();
 }
@@ -208,7 +208,7 @@ void BossScene::load()
 	restart();
 
 	PlayerGUI::initialiseGUI();
-	ls::loadLevelFile("res/lvl_map.txt", 32.f);
+	ls::loadLevelFile("res/dev_level.txt", 32.f);
 	boss->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]));
 }
 
@@ -271,8 +271,7 @@ void MenuScene::load()
 	playText.setFont(font);
 	playText.setFillColor(sf::Color::White);
 	playText.setCharacterSize(28);
-	playText.setOrigin(playText.getGlobalBounds().left + round(playText.getGlobalBounds().width / 2),
-		playText.getGlobalBounds().top + round(playText.getGlobalBounds().height / 2));
+	playText.setOrigin(playText.getGlobalBounds().left + round(playText.getGlobalBounds().width / 2), playText.getGlobalBounds().top + round(playText.getGlobalBounds().height / 2));
 	playText.setPosition(gameWidth / 10, gameHeight / 2);
 	playText.setString("Play Game");
 
@@ -293,6 +292,7 @@ void MenuScene::update(double dt)
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		{
 			activeScene = dungeonScene;
+			timer.restart();
 		}
 	}
 	else {
@@ -401,7 +401,7 @@ void VictoryScene::update(double dt)
 					leaderboard.insert(leaderboard.begin() + i, newScore);
 
 					//If leaderboard already has 10 entries, then remove the last one
-					if (leaderboard.size() == 10)
+					if (leaderboard.size() > 10)
 					{
 						leaderboard.erase(leaderboard.begin() + leaderboard.size() - 1);
 					}
