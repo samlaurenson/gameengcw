@@ -96,7 +96,13 @@ int main()
     {
         window.clear();
         Camera.setSize(gameWidth, gameHeight);
-        Camera.setCenter(player->getPosition());
+        if (activeScene == menuScene || activeScene == leaderboardScene)
+        {
+            Camera.setCenter(gameWidth / 2, gameHeight * 0.65);
+        }
+        else {
+            Camera.setCenter(player->getPosition());
+        }
         window.setView(Camera);
         Update(window);
         Render(window);
