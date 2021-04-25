@@ -142,7 +142,6 @@ LevelSystem::TILE LevelSystem::getTile(Vector2ul p)
 	}
 	return _tiles[(p.y * _width) + p.x];
 }
-
 LevelSystem::TILE LevelSystem::getTileAt(Vector2f v)
 {
 	auto a = v - _offset;
@@ -177,4 +176,19 @@ vector<Vector2ul> LevelSystem::findTiles(TILE lookupTile)
 		}
 	}
 	return foundTiles;
+}
+
+void LevelSystem::Unload()
+{
+	_tiles = nullptr;
+	std::cout << "Unloaded" << std::endl;
+}
+
+bool LevelSystem::isLoaded()
+{
+	if (_tiles != nullptr)
+	{
+		return true;
+	}
+	return false;
 }

@@ -14,6 +14,8 @@
 std::shared_ptr<Entity> player;
 std::vector<std::shared_ptr<Entity>> enemies;
 std::shared_ptr<Entity> boss;
+sf::Vector2f bossEntrance;
+
 
 std::shared_ptr<Scene> activeScene;
 std::shared_ptr<Scene> dungeonScene;
@@ -107,20 +109,32 @@ void DungeonScene::load()
 
 
 
-	ls::loadLevelFile("res/lvl_map.txt", 32.f);
+	//ls::loadLevelFile("res/lvl_map.txt", 32.f);
 	PlayerGUI::initialiseGUI();
-	restart();
+	
 }
 
 void DungeonScene::update(double dt)
 {
 	//Using this to check transition between dungeon scene and boss scene (i.e. all bullets clear off screen and player and boss load)
 	//Replace this with if the user runs over the boss room entrance
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+	//{
+	//	activeScene = bossScene;
+	//	Bullet::clear();
+	//	ls::Unload();
+	//	bossScene->restart();
+	//	return;
+	//	//restart();
+	//}
+
+	if (ls::getTileAt(player->getPosition()) == ls::getTileAt(bossEntrance))
 	{
 		activeScene = bossScene;
 		Bullet::clear();
-		//restart();
+		ls::Unload();
+		bossScene->restart();
+		return;
 	}
 
 	if (!player->isAlive())
@@ -141,10 +155,23 @@ void DungeonScene::render(sf::RenderWindow& window)
 	PlayerGUI::render(window);
 }
 
+
 //Function to reset player position when dungeon scene is loaded
 void DungeonScene::restart()
 {
+	ls::loadLevelFile("res/lvl_map.txt", 32.f);
+
+	auto availableBossSpawns = ls::findTiles(ls::RANDOMBOSSSPAWN);
+
+	
+
 	srand((int)time(0)); //Using time as seed in srand to make randomly generated numbers more random
+
+	int rando = rand() % availableBossSpawns.size();
+
+	bossEntrance = ls::getTilePosition(availableBossSpawns[rando]);
+
+	//ls::getTilePosition(availableBossSpawns[rando]);
 
 	//Clearing scene of bullets and resetting the GUI
 	Bullet::clear();
@@ -205,23 +232,17 @@ void BossScene::load()
 	_ents.list.push_back(b);
 	boss = b;
 
-	restart();
+	
 
 	PlayerGUI::initialiseGUI();
-	ls::loadLevelFile("res/lvl_map.txt", 32.f);
-	boss->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]));
+	//ls::loadLevelFile("res/dev_level2.txt", 32.f);
+	//boss->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]));
 }
 
 
 void BossScene::update(double dt)
 {
-	//Using this to test that dungeon scene will reset correctly when opened
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-	{
-		activeScene = dungeonScene;
-		Bullet::clear();
-	}
-
+	
 
 	if (!boss->isAlive() && !gotTime)
 	{
@@ -230,12 +251,16 @@ void BossScene::update(double dt)
 		timeCompleted = timer.getElapsedTime().asSeconds();
 		std::cout << "Completed dungeon in: " << timeCompleted << std::endl;
 
-		activeScene = winScene; //After boss has been defeated - player has won
+		activeScene = winScene;  //After boss has been defeated - player has won
+		ls::Unload();
+		return;
 	}
 
 	if (!player->isAlive())
 	{
 		activeScene = loseScene;
+		ls::Unload();
+		return;
 	}
 
 	Bullet::Update(dt);
@@ -253,6 +278,12 @@ void BossScene::render(sf::RenderWindow& window)
 
 void BossScene::restart()
 {
+	ls::loadLevelFile("res/dev_level2.txt", 32.f);
+
+	boss->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]));
+	player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
+
+
 	boss->setHealth(boss->getHealthPool());
 	boss->setAlive(true);
 }
@@ -291,6 +322,7 @@ void MenuScene::update(double dt)
 		playText.setFillColor(sf::Color::Yellow);
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		{
+			dungeonScene->restart();
 			activeScene = dungeonScene;
 			timer.restart();
 		}

@@ -96,7 +96,7 @@ int main()
     {
         window.clear();
         Camera.setSize(gameWidth, gameHeight);
-        if (activeScene == menuScene || activeScene == leaderboardScene)
+        if (activeScene == menuScene || activeScene == leaderboardScene || activeScene == winScene || activeScene == loseScene)
         {
             Camera.setCenter(gameWidth / 2, gameHeight * 0.65);
         }
