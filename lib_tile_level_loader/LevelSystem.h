@@ -27,6 +27,7 @@ public:
 	static std::vector<sf::Vector2ul> findTiles(TILE);
 	static void Unload();
 	static bool isLoaded();
+	static void setTileType(sf::Vector2ul p, TILE t);
 
 protected:
 	static std::unique_ptr<TILE[]> _tiles; //Internal array of tiles

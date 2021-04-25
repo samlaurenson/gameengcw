@@ -4,7 +4,6 @@
 extern std::shared_ptr<Entity> player;
 extern std::vector<std::shared_ptr<Entity>> enemies;
 extern std::shared_ptr<Entity> boss;
-extern sf::Vector2f bossEntrance;
 
 
 extern std::shared_ptr<Scene> activeScene;
@@ -20,7 +19,7 @@ extern sf::Clock timer;
 class DungeonScene : public Scene {
 private:
 	sf::Text text;
-	
+	sf::Vector2f bossEntrance;
 
 public:
 	DungeonScene() = default;

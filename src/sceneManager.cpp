@@ -14,8 +14,6 @@
 std::shared_ptr<Entity> player;
 std::vector<std::shared_ptr<Entity>> enemies;
 std::shared_ptr<Entity> boss;
-sf::Vector2f bossEntrance;
-
 
 std::shared_ptr<Scene> activeScene;
 std::shared_ptr<Scene> dungeonScene;
@@ -107,39 +105,26 @@ void DungeonScene::load()
 	_ents.list.push_back(en2);
 	enemies.push_back(en2);
 
-
-
-	//ls::loadLevelFile("res/lvl_map.txt", 32.f);
 	PlayerGUI::initialiseGUI();
-	
 }
 
 void DungeonScene::update(double dt)
 {
-	//Using this to check transition between dungeon scene and boss scene (i.e. all bullets clear off screen and player and boss load)
-	//Replace this with if the user runs over the boss room entrance
-	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-	//{
-	//	activeScene = bossScene;
-	//	Bullet::clear();
-	//	ls::Unload();
-	//	bossScene->restart();
-	//	return;
-	//	//restart();
-	//}
-
+	//If the player walks over the boss room entrance tile then the scene will switch to the boss room
 	if (ls::getTileAt(player->getPosition()) == ls::getTileAt(bossEntrance))
 	{
 		activeScene = bossScene;
 		Bullet::clear();
-		ls::Unload();
-		bossScene->restart();
+		ls::Unload(); //Unloading any loaded in maps
+		bossScene->restart(); //Calling restart on the boss scene to load in maps and set spawn points, boss health, etc
 		return;
 	}
 
 	if (!player->isAlive())
 	{
 		activeScene = loseScene;
+		ls::Unload();
+		return;
 	}
 
 	Scene::update(dt);
@@ -161,17 +146,24 @@ void DungeonScene::restart()
 {
 	ls::loadLevelFile("res/lvl_map.txt", 32.f);
 
-	auto availableBossSpawns = ls::findTiles(ls::RANDOMBOSSSPAWN);
-
-	
-
 	srand((int)time(0)); //Using time as seed in srand to make randomly generated numbers more random
 
+	auto availableBossSpawns = ls::findTiles(ls::RANDOMBOSSSPAWN);
 	int rando = rand() % availableBossSpawns.size();
+	bossEntrance = ls::getTilePosition(availableBossSpawns[rando]); //Getting the position of the random boss room entrance tile
 
-	bossEntrance = ls::getTilePosition(availableBossSpawns[rando]);
 
-	//ls::getTilePosition(availableBossSpawns[rando]);
+	//Loop to go over all RANDOMBOSSSPAWN tiles and change tiles to EMPTY and transparent if they are not the boss room entrance tile
+	for (int i = 0; i < availableBossSpawns.size(); ++i)
+	{
+		//If this is not the same tile (checking by same position)
+		if (bossEntrance != ls::getTilePosition(availableBossSpawns[i]))
+		{
+			//Setting all the tiles that are not boss room entrance tiles to empty tiles and making them transparent
+			ls::setTileType(availableBossSpawns[i], ls::EMPTY);
+			ls::setColor(ls::getTileAt(ls::getTilePosition(availableBossSpawns[i])), sf::Color::Transparent);
+		}
+	}
 
 	//Clearing scene of bullets and resetting the GUI
 	Bullet::clear();
@@ -242,8 +234,6 @@ void BossScene::load()
 
 void BossScene::update(double dt)
 {
-	
-
 	if (!boss->isAlive() && !gotTime)
 	{
 		//Bullet::clear();
@@ -322,7 +312,7 @@ void MenuScene::update(double dt)
 		playText.setFillColor(sf::Color::Yellow);
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		{
-			dungeonScene->restart();
+			dungeonScene->restart(); //restarting dungeonscene to load in map and then switch to dungeon scene
 			activeScene = dungeonScene;
 			timer.restart();
 		}

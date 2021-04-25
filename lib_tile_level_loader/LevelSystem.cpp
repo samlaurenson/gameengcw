@@ -134,6 +134,16 @@ Vector2f LevelSystem::getTilePosition(Vector2ul p)
 	return (Vector2f(p.x, p.y) * _tileSize);
 }
 
+void LevelSystem::setTileType(Vector2ul p, TILE t)
+{
+	if (p.x > _width || p.y > _height)
+	{
+		throw string("Tile out of range: ") + to_string(p.x) + "," + to_string(p.y) + ")";
+	}
+	_tiles[(p.y * _width) + p.x] = t;
+	buildSprites();
+}
+
 LevelSystem::TILE LevelSystem::getTile(Vector2ul p)
 {
 	if (p.x > _width || p.y > _height)
