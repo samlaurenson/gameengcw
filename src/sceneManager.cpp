@@ -107,7 +107,7 @@ void DungeonScene::load()
 
 
 
-	ls::loadLevelFile("res/lvl_map.txt", 32.f);
+	ls::loadLevelFile("res/dev_level2.txt", 32.f);
 	PlayerGUI::initialiseGUI();
 	restart();
 }
@@ -208,7 +208,7 @@ void BossScene::load()
 	restart();
 
 	PlayerGUI::initialiseGUI();
-	ls::loadLevelFile("res/lvl_map.txt", 32.f);
+	ls::loadLevelFile("res/dev_level2.txt", 32.f);
 	boss->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]));
 }
 
