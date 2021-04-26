@@ -27,7 +27,7 @@ void PlayerGUI::initialiseGUI()
 
 	// --- Creating Timer ---
 	_timeSpent.setFont(_font);
-	_timeSpent.setFillColor(sf::Color::White);
+	_timeSpent.setFillColor(sf::Color::Red);
 	_timeSpent.setCharacterSize(24);
 }
 

@@ -11,10 +11,13 @@
 #include "playergui.h"
 #include "cmp_enemy_movement.h"
 
+#pragma region Entities
 std::shared_ptr<Entity> player;
 std::vector<std::shared_ptr<Entity>> enemies;
 std::shared_ptr<Entity> boss;
+#pragma endregion
 
+#pragma region Scenes
 std::shared_ptr<Scene> activeScene;
 std::shared_ptr<Scene> dungeonScene;
 std::shared_ptr<Scene> bossScene;
@@ -22,6 +25,7 @@ std::shared_ptr<Scene> menuScene;
 std::shared_ptr<Scene> loseScene;
 std::shared_ptr<Scene> winScene;
 std::shared_ptr<Scene> leaderboardScene;
+#pragma endregion
 
 std::string VictoryScene::playerInput;
 
@@ -44,9 +48,7 @@ void Scene::restart() { gotTime = false; timeCompleted = 0; }
 
 void DungeonScene::load()
 {
-	timer.restart();
-
-	//Loading in player
+	//*****Loading in player*****
 	auto pl = std::make_shared<Entity>();
 	pl->setHealthPool(200);
 	pl->setFirerate(0.4f);
@@ -64,46 +66,63 @@ void DungeonScene::load()
 	_ents.list.push_back(pl);
 	player = pl;
 
-	//Loading enemies
-	auto en = std::make_shared<Enemy>();
-	en->setHealthPool(100);
-	en->setBulletRange(700.f);
-	en->setDetectionDistance(350.f);
-	en->setDamage(25);
-	en->setRandomSpawnType(true);
+	//*****Loading in regular enemies*****
+	//Spawning 25 regular difficulty enemies
+	for (int i = 0; i < 25; i++)
+	{
+		auto en = std::make_shared<Enemy>();
+		en->setHealthPool(100);
+		en->setBulletRange(700.f);
+		en->setDetectionDistance(200.f);
+		en->setDamage(25);
+		en->setRandomSpawnType(false);
+		en->setFirerate(0.6f);
+		en->addComponent<EnemyMovementComponent>()->setSpeed(75.f);
 
+		auto model = en->addComponent<ActorModelComponent>();
+		model->setModel(sf::IntRect(32, 32, 32, 32));
+		model->setScaleFactor(1.f);
+
+		_ents.list.push_back(en);
+		enemies.push_back(en);
+	}
+
+	//*****Loading hard difficulty enemies*****
+	std::vector<std::shared_ptr<Buff>> buffs; //Vector which will store all created buffs
+
+	//Creating and adding buffs to buffs array
 	auto b = std::make_shared<Buff>();
 	b->buff = Buff::ATKSPEED;
 	b->modifier = 0.8f; //0.8f is a 20% increase to player attack speed
-	en->addBuffDrop(b);
-	en->setFirerate(0.6f);
-	en->addComponent<EnemyMovementComponent>();
+	buffs.push_back(b);
 
-	//add component for enemy movement and detection radius for when the enemy will start firing at enemy
-	auto model = en->addComponent<ActorModelComponent>();
-	model->setModel(sf::IntRect(32, 32, 32, 32));
-	model->setScaleFactor(3.f);
-
-	_ents.list.push_back(en);
-	enemies.push_back(en);
-
-	auto en2 = std::make_shared<Enemy>();
-	en2->setHealthPool(100);
-	en2->setBulletRange(700.f);
-	en2->setDetectionDistance(350.f);
-	en2->setDamage(25);
-	en2->setRandomSpawnType(true);
-	en2->addComponent<EnemyMovementComponent>();
 	auto b2 = std::make_shared<Buff>();
 	b2->buff = Buff::ATKDMG;
 	b2->modifier = 2.f; //2.f is double the current player damage - default player damage is 25 so when buff applied will be 50
-	en2->addBuffDrop(b2);
-	en2->setFirerate(0.6f);
-	auto model2 = en2->addComponent<ActorModelComponent>();
-	model2->setModel(sf::IntRect(32, 32, 32, 32));
-	model2->setScaleFactor(3.f);
-	_ents.list.push_back(en2);
-	enemies.push_back(en2);
+	buffs.push_back(b2);
+
+	//Looping to create hard difficulty enemies
+	for (int i = 0; i < 2; i++)
+	{
+		auto en = std::make_shared<Enemy>();
+		en->setHealthPool(200);
+		en->setBulletRange(700.f);
+		en->setDetectionDistance(350.f);
+		en->setDamage(50);
+		en->setRandomSpawnType(true);
+		en->setFirerate(0.6f);
+		en->addComponent<EnemyMovementComponent>();
+
+		auto model = en->addComponent<ActorModelComponent>();
+		model->setModel(sf::IntRect(32, 32, 32, 32));
+		model->setScaleFactor(3.f);
+
+		//Assigning a buff that this enemy will drop when they are defeated
+		en->addBuffDrop(buffs[i]);
+
+		_ents.list.push_back(en);
+		enemies.push_back(en);
+	}
 
 	PlayerGUI::initialiseGUI();
 }
@@ -146,7 +165,25 @@ void DungeonScene::restart()
 {
 	ls::loadLevelFile("res/lvl_map.txt", 32.f);
 
+	//Clearing scene of bullets and resetting the GUI
+	Bullet::clear();
+	PlayerGUI::reset();
+
+	//Resetting player values to default and setting spawn point
+	player->setHealth(player->getHealthPool());
+	player->setAlive(true);
+	player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
+	player->GetCompatibleComponent<ActorMovementComponent>()[0]->setSpeed(150.f);
+
+	//Setting player damage and fire rate to default in case they picked up any buffs
+	player->setFirerate(0.4f);
+	player->setDamage(25);
+
+
 	srand((int)time(0)); //Using time as seed in srand to make randomly generated numbers more random
+
+	//***** SETTING BOSS ROOM ENTRANCE LOCATION *****
+#pragma region BossRoomEntranceSpawn
 
 	auto availableBossSpawns = ls::findTiles(ls::RANDOMBOSSSPAWN);
 	int rando = rand() % availableBossSpawns.size();
@@ -164,23 +201,11 @@ void DungeonScene::restart()
 			ls::setColor(ls::getTileAt(ls::getTilePosition(availableBossSpawns[i])), sf::Color::Transparent);
 		}
 	}
+#pragma endregion
 
-	//Clearing scene of bullets and resetting the GUI
-	Bullet::clear();
-	PlayerGUI::reset();
-
-	//Also reset player and enemy health here for when scenes are restarted
-	player->setHealth(player->getHealthPool());
-	player->setAlive(true);
-	//player->setFirerate(0.4f);
-	player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
-	player->GetCompatibleComponent<ActorMovementComponent>()[0]->setSpeed(150.f);
-
-	//Setting player damage and fire rate to default in case they picked up any buffs
-	player->setFirerate(0.4f);
-	player->setDamage(25);
-
-	auto enemyTiles = ls::findTiles(ls::ENEMY); //create new tile type for ENEMYRANDOM
+	//***** SETTING ENEMY SPAWN LOCATIONS *****
+#pragma region EnemySpawns
+	auto randEnemyTiles = ls::findTiles(ls::RANDOMENEMY); //Getting an array of all RANDOMENEMY tiles
 
 	//could add a type to enemy entity to check whether they are a regular or hard enemy type so if enemy is regular spawn on enemy tile, if enemy is hard spawn on randomenemy tile
 	for (int i = 0; i < enemies.size(); i++)
@@ -193,15 +218,17 @@ void DungeonScene::restart()
 		//If not random spawn type, then enemies will spawn on all set tiles
 		if (enemies[i]->getRandomSpawnType())
 		{
-			int random = rand() % enemyTiles.size();
-			enemies[i]->setPosition(ls::getTilePosition(enemyTiles[random]));
-			enemyTiles.erase(enemyTiles.begin() + random);
+			int random = rand() % randEnemyTiles.size();
+			enemies[i]->setPosition(ls::getTilePosition(randEnemyTiles[random]));
+			randEnemyTiles.erase(randEnemyTiles.begin() + random);
 		}
 		else {
 			//Will place enemies as long as there are enough spawn points for enemies
 			enemies[i]->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[i]));
 		}
 	}
+#pragma endregion
+
 	Scene::restart();
 }
 
@@ -224,11 +251,7 @@ void BossScene::load()
 	_ents.list.push_back(b);
 	boss = b;
 
-	
-
 	PlayerGUI::initialiseGUI();
-	//ls::loadLevelFile("res/dev_level2.txt", 32.f);
-	//boss->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]));
 }
 
 
@@ -236,7 +259,6 @@ void BossScene::update(double dt)
 {
 	if (!boss->isAlive() && !gotTime)
 	{
-		//Bullet::clear();
 		gotTime = true;
 		timeCompleted = timer.getElapsedTime().asSeconds();
 		std::cout << "Completed dungeon in: " << timeCompleted << std::endl;
@@ -268,12 +290,13 @@ void BossScene::render(sf::RenderWindow& window)
 
 void BossScene::restart()
 {
-	ls::loadLevelFile("res/dev_level2.txt", 32.f);
+	ls::loadLevelFile("res/dev_level2.txt", 32.f); //Loading in the level
 
+	//Setting player and boss spawn locations
 	boss->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]));
 	player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
 
-
+	//Resetting boss health and alive status
 	boss->setHealth(boss->getHealthPool());
 	boss->setAlive(true);
 }

@@ -47,9 +47,10 @@ void Update(sf::RenderWindow& window)
 
     mousepos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && activeScene != menuScene)
     {
         activeScene = menuScene;
+        ls::Unload(); //Unloading any maps that are currently loaded in upon returning to main menu
 
         //Resetting dungeon and boss scenes so all values are the default values and all entities are alive
         dungeonScene->restart();
