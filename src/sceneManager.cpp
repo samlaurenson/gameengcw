@@ -242,11 +242,14 @@ void BossScene::load()
 	b->setHealthPool(2000);
 	b->setBulletRange(5000.f);
 	b->setDetectionDistance(1000);
-	b->setFirerate(0.2f);
+	b->setFirerate(0.6f);
 	b->setDamage(75);
+
+	b->addComponent<EnemyMovementComponent>()->setSpeed(10.f);
 	auto model = b->addComponent<ActorModelComponent>();
 	model->setModel(sf::IntRect(32, 32, 32, 32));
 	model->setScaleFactor(10.f);
+
 
 	_ents.list.push_back(b);
 	boss = b;
@@ -275,6 +278,10 @@ void BossScene::update(double dt)
 		return;
 	}
 
+	if (boss->isAlive() && boss->getHealthPool()/2 >= boss->getHealth())
+	{
+		boss->setFirerate(0.2f);
+	}
 	Bullet::Update(dt);
 	Scene::update(dt);
 	PlayerGUI::update(dt);
@@ -299,6 +306,7 @@ void BossScene::restart()
 	//Resetting boss health and alive status
 	boss->setHealth(boss->getHealthPool());
 	boss->setAlive(true);
+	boss->setFirerate(0.6f);
 }
 
 void MenuScene::load()
