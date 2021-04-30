@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
+extern sf::Font font;
 extern sf::Sound playershootaudio;
 extern sf::SoundBuffer playshootbuffer;
 extern sf::Texture spritesheet;

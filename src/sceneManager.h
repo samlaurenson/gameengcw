@@ -42,8 +42,7 @@ public:
 };
 
 class MenuScene : public Scene {
-private:
-	sf::Font font;
+private:	
 	sf::Text title;
 	sf::Text playText;
 	sf::Text leaderboardButton;
@@ -56,7 +55,6 @@ public:
 
 class LoseScene : public Scene {
 private:
-	sf::Font font;
 	sf::Text loseText;
 public:
 	LoseScene() = default;
@@ -67,7 +65,6 @@ public:
 
 class VictoryScene : public Scene {
 private:
-	sf::Font font;
 	sf::Text winText;
 	sf::Text timeTaken;
 	static std::string playerInput;
@@ -85,7 +82,6 @@ public:
 class LeaderboardScene : public Scene {
 private:
 	static std::string path;
-	sf::Font font;
 	sf::Text sceneTitle;
 	sf::Text leaderboardText;
 	sf::Text backButton;

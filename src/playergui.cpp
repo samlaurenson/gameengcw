@@ -3,7 +3,6 @@
 #include "sceneManager.h"
 
 sf::RectangleShape PlayerGUI::_hpBar;
-sf::Font PlayerGUI::_font;
 sf::Text PlayerGUI::_remainingHP;
 sf::Text PlayerGUI::_timeSpent;
 
@@ -20,13 +19,12 @@ void PlayerGUI::initialiseGUI()
 	_hpBar.setFillColor(sf::Color::Red);
 
 	// --- Creating text on HP bar to show exactly how much health is remaining ---
-	_font.loadFromFile("res/fonts/Roboto-Medium.ttf");
-	_remainingHP.setFont(_font);
+	_remainingHP.setFont(font);
 	_remainingHP.setFillColor(sf::Color::White);
 	_remainingHP.setCharacterSize(24);
 
 	// --- Creating Timer ---
-	_timeSpent.setFont(_font);
+	_timeSpent.setFont(font);
 	_timeSpent.setFillColor(sf::Color::Red);
 	_timeSpent.setCharacterSize(24);
 }

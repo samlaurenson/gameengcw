@@ -7,7 +7,6 @@ protected:
 	PlayerGUI();
 	static sf::RectangleShape _hpBar;
 	static sf::Text _remainingHP;
-	static sf::Font _font;
 	static sf::Sprite _atkSpeedBuff;
 	static sf::Sprite _atkDamageBuff;
 	static bool _atkSpeedBool;

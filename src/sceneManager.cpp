@@ -239,7 +239,7 @@ void BossScene::load()
 	//may be cool to add actor buff component to boss where they have a higher fire rate when they reach 50% health
 	//so in update function - when boss health is less than 50% of its original health - apply attack speed buff
 	auto b = std::make_shared<Enemy>();
-	b->setHealthPool(20);
+	b->setHealthPool(2000);
 	b->setBulletRange(5000.f);
 	b->setDetectionDistance(1000);
 	b->setFirerate(0.2f);
@@ -304,7 +304,6 @@ void BossScene::restart()
 void MenuScene::load()
 {
 	//Set title
-	font.loadFromFile("res/fonts/Roboto-Medium.ttf");
 	title.setFont(font);
 	title.setFillColor(sf::Color::White);
 	title.setCharacterSize(36);
@@ -371,7 +370,6 @@ void MenuScene::render(sf::RenderWindow& window)
 void LoseScene::load()
 {
 	//Set lose text
-	font.loadFromFile("res/fonts/Roboto-Medium.ttf");
 	loseText.setFont(font);
 	loseText.setFillColor(sf::Color::White);
 	loseText.setCharacterSize(36);
@@ -393,7 +391,6 @@ void LoseScene::render(sf::RenderWindow& window)
 void VictoryScene::load()
 {
 	//Text to say that player has won
-	font.loadFromFile("res/fonts/Roboto-Medium.ttf");
 	winText.setFont(font);
 	winText.setFillColor(sf::Color::White);
 	winText.setCharacterSize(36);
@@ -503,7 +500,6 @@ void LeaderboardScene::load()
 	//Setting path to leaderboard
 	LeaderboardScene::setLeaderboardFilePath("res/leaderboard.scores");
 
-	font.loadFromFile("res/fonts/Roboto-Medium.ttf");
 
 	//Setting leaderboard title
 	sceneTitle.setFont(font);

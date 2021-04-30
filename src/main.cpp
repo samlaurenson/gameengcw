@@ -8,6 +8,7 @@
 int gameHeight = 1080;
 int gameWidth = 1920;
 
+sf::Font font;
 sf::Sound playershootaudio;
 sf::SoundBuffer playshootbuffer;
 sf::Texture spritesheet;
@@ -27,7 +28,8 @@ void Load()
         std::cerr << "Failed to load spritesheet!" << std::endl;
     }
 
-    
+    font.loadFromFile("res/fonts/Roboto-Medium.ttf");
+
     playershootaudio.setBuffer(playshootbuffer);
     
 
