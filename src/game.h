@@ -4,7 +4,9 @@
 
 extern sf::Font font;
 extern sf::Sound playershootaudio;
+extern sf::Sound bossroaraudio;
 extern sf::SoundBuffer playshootbuffer;
+extern sf::SoundBuffer bossroarbuffer;
 extern sf::Texture spritesheet;
 extern sf::View Camera;
 extern int gameWidth;

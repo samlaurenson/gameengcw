@@ -10,7 +10,9 @@ int gameWidth = 1920;
 
 sf::Font font;
 sf::Sound playershootaudio;
+sf::Sound bossroaraudio;
 sf::SoundBuffer playshootbuffer;
+sf::SoundBuffer bossroarbuffer;
 sf::Texture spritesheet;
 sf::Vector2f mousepos;
 sf::View Camera;
@@ -18,6 +20,10 @@ sf::View Camera;
 
 void Load()
 {
+    if (!bossroarbuffer.loadFromFile("res/Audio/mixkit-giant-monster-roar-1972.wav"))
+    {
+        std::cerr << "Failed to load boss audio!" << std::endl;
+    }
     
     if (!playshootbuffer.loadFromFile("res/Audio/270343__littlerobotsoundfactory__shoot-01.wav"))
     {
@@ -30,7 +36,9 @@ void Load()
 
     font.loadFromFile("res/fonts/Roboto-Medium.ttf");
 
+    bossroaraudio.setBuffer(bossroarbuffer);
     playershootaudio.setBuffer(playshootbuffer);
+
     
 
     //Loading scene assets

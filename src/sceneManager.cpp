@@ -255,6 +255,8 @@ void BossScene::load()
 	boss = b;
 
 	PlayerGUI::initialiseGUI();
+
+	phaseFlag = false;
 }
 
 
@@ -277,10 +279,15 @@ void BossScene::update(double dt)
 		ls::Unload();
 		return;
 	}
-
-	if (boss->isAlive() && boss->getHealthPool()/2 >= boss->getHealth())
+	// Boss attack speed increases at half hp. Also plays a soundeffect to signal this.
+	if (boss->isAlive() && boss->getHealthPool()/2 >= boss->getHealth() && phaseFlag == false)
 	{
 		boss->setFirerate(0.2f);
+
+		bossroaraudio.play();
+		//play .wav
+
+		phaseFlag = true;
 	}
 	Bullet::Update(dt);
 	Scene::update(dt);
@@ -307,6 +314,8 @@ void BossScene::restart()
 	boss->setHealth(boss->getHealthPool());
 	boss->setAlive(true);
 	boss->setFirerate(0.6f);
+
+	phaseFlag = false;
 }
 
 void MenuScene::load()

@@ -32,6 +32,7 @@ public:
 class BossScene : public Scene {
 private:
 	sf::Text text;
+	bool phaseFlag;
 
 public:
 	BossScene() = default;
