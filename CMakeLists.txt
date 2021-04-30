@@ -36,7 +36,7 @@ target_include_directories(lib_tile_level_loader INTERFACE "${CMAKE_SOURCE_DIR}/
 file(GLOB_RECURSE SOURCES src/*.cpp src/*.h)
 add_executable(GAME_CW ${SOURCES})
 target_include_directories(GAME_CW PRIVATE ${SFML_INCS})
-target_link_libraries(GAME_CW lib_tile_level_loader lib_maths lib_ecm sfml-graphics)
+target_link_libraries(GAME_CW lib_tile_level_loader lib_maths lib_ecm sfml-graphics sfml-audio)
 
 ### Copying resources over ###
 set_target_properties(GAME_CW PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration))

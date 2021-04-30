@@ -1,6 +1,9 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
+extern sf::Sound playershootaudio;
+extern sf::SoundBuffer playshootbuffer;
 extern sf::Texture spritesheet;
 extern sf::View Camera;
 extern int gameWidth;

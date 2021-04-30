@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "sceneManager.h"
 #include <LevelSystem.h>
 #include "game.h"
@@ -7,6 +8,8 @@
 int gameHeight = 1080;
 int gameWidth = 1920;
 
+sf::Sound playershootaudio;
+sf::SoundBuffer playshootbuffer;
 sf::Texture spritesheet;
 sf::Vector2f mousepos;
 sf::View Camera;
@@ -14,10 +17,19 @@ sf::View Camera;
 
 void Load()
 {
+    
+    if (!playshootbuffer.loadFromFile("res/Audio/270343__littlerobotsoundfactory__shoot-01.wav"))
+    {
+        std::cerr << "Failed to load player audio!" << std::endl;
+    }
     if (!spritesheet.loadFromFile("res/img/spritesheetEntity2.png"))
     {
         std::cerr << "Failed to load spritesheet!" << std::endl;
     }
+
+    
+    playershootaudio.setBuffer(playshootbuffer);
+    
 
     //Loading scene assets
     menuScene.reset(new MenuScene());
