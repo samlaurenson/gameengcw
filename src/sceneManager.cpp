@@ -53,7 +53,7 @@ void DungeonScene::load()
 	pl->setHealthPool(200);
 	pl->setFirerate(0.4f);
 	pl->setDamage(25);
-	pl->setBulletRange(500.f);
+	pl->setBulletRange(125.f);
 
 	pl->addComponent<PlayerMovementComponent>();
 	auto shape = pl->addComponent<ShapeComponent>();
@@ -73,7 +73,7 @@ void DungeonScene::load()
 		auto en = std::make_shared<Enemy>();
 		en->setHealthPool(100);
 		en->setBulletRange(700.f);
-		en->setDetectionDistance(200.f);
+		en->setDetectionDistance(250.f);
 		en->setDamage(25);
 		en->setRandomSpawnType(false);
 		en->setFirerate(0.6f);
@@ -239,13 +239,13 @@ void BossScene::load()
 	//may be cool to add actor buff component to boss where they have a higher fire rate when they reach 50% health
 	//so in update function - when boss health is less than 50% of its original health - apply attack speed buff
 	auto b = std::make_shared<Enemy>();
-	b->setHealthPool(2000);
+	b->setHealthPool(3000);
 	b->setBulletRange(5000.f);
 	b->setDetectionDistance(1000);
 	b->setFirerate(0.6f);
 	b->setDamage(75);
 
-	b->addComponent<EnemyMovementComponent>()->setSpeed(10.f);
+	b->addComponent<EnemyMovementComponent>()->setSpeed(60.f);
 	auto model = b->addComponent<ActorModelComponent>();
 	model->setModel(sf::IntRect(32, 32, 32, 32));
 	model->setScaleFactor(10.f);
@@ -284,6 +284,8 @@ void BossScene::update(double dt)
 	{
 		boss->setFirerate(0.2f);
 
+		boss->GetCompatibleComponent<EnemyMovementComponent>()[0]->setSpeed(100.f);
+
 		bossroaraudio.play();
 		//play .wav
 
@@ -304,7 +306,7 @@ void BossScene::render(sf::RenderWindow& window)
 
 void BossScene::restart()
 {
-	ls::loadLevelFile("res/dev_level2.txt", 32.f); //Loading in the level
+	ls::loadLevelFile("res/boss_map.txt", 32.f); //Loading in the level
 
 	//Setting player and boss spawn locations
 	boss->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]));
@@ -314,6 +316,7 @@ void BossScene::restart()
 	boss->setHealth(boss->getHealthPool());
 	boss->setAlive(true);
 	boss->setFirerate(0.6f);
+	boss->GetCompatibleComponent<EnemyMovementComponent>()[0]->setSpeed(40.f);
 
 	phaseFlag = false;
 }
