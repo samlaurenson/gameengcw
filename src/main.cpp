@@ -20,6 +20,7 @@ sf::View Camera;
 
 void Load()
 {
+    // If statements to check audio files and sprite sheet load correcty.
     if (!bossroarbuffer.loadFromFile("res/Audio/mixkit-giant-monster-roar-1972.wav"))
     {
         std::cerr << "Failed to load boss audio!" << std::endl;

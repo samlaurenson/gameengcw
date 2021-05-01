@@ -279,7 +279,7 @@ void BossScene::update(double dt)
 		ls::Unload();
 		return;
 	}
-	// Boss attack speed increases at half hp. Also plays a soundeffect to signal this.
+	// Boss attack and movement speed increases at half hp. Also plays a soundeffect to signal this.
 	if (boss->isAlive() && boss->getHealthPool()/2 >= boss->getHealth() && phaseFlag == false)
 	{
 		boss->setFirerate(0.2f);
@@ -312,7 +312,7 @@ void BossScene::restart()
 	boss->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]));
 	player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
 
-	//Resetting boss health and alive status
+	//Resetting boss health, attack and movement speed, and alive status
 	boss->setHealth(boss->getHealthPool());
 	boss->setAlive(true);
 	boss->setFirerate(0.6f);
