@@ -27,6 +27,7 @@ void Entity::render(sf::RenderWindow& window)
 
 void EntityManager::update(double dt)
 {
+	//Update every entity so long as the entity is alive
 	for (auto& e : list)
 	{
 		if (e->isAlive())
@@ -38,6 +39,7 @@ void EntityManager::update(double dt)
 
 void EntityManager::render(sf::RenderWindow& window)
 {
+	//Render every entity so long as that entity is alive
 	for (auto& e : list)
 	{
 		if (e->isAlive())
@@ -51,6 +53,10 @@ Component::Component(Entity* const p) : _parent(p)
 {
 }
 
+/*
+	#### GETTERS AND SETTERS ####
+*/
+#pragma region GetSetMethods
 void Entity::setHealth(int health)
 {
 	_health = health;
@@ -110,3 +116,4 @@ bool Entity::getRandomSpawnType() const
 {
 	return _randomSpawn;
 }
+#pragma endregion

@@ -6,6 +6,7 @@ void ActorMovementComponent::update(double dt) {  }
 
 ActorMovementComponent::ActorMovementComponent(Entity* p) : _speed(150.0f), Component(p) {}
 
+//Function to check if there is an impassable object in the way of where the player will be moving
 bool ActorMovementComponent::validMove(const sf::Vector2f& pos) {
 	return (LevelSystem::getTileAt(pos) != LevelSystem::WALL);
 }

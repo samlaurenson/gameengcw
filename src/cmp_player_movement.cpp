@@ -45,7 +45,7 @@ void PlayerMovementComponent::update(double dt)
 			firetime = _parent->getFirerate();
 			Bullet::Fire(_parent->getPosition(), false, mousepos, _parent->getDamage(), _parent->getBulletRange());
 
-			playershootaudio.play();
+			playershootaudio.play(); //Playing audio when the player shoots a bullet
 		}
 	}
 

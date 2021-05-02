@@ -3,7 +3,6 @@
 #include "sceneManager.h"
 #include <LevelSystem.h>
 #include "game.h"
-#include "bullet.h"
 
 int gameHeight = 1080;
 int gameWidth = 1920;
@@ -120,6 +119,8 @@ int main()
     {
         window.clear();
         Camera.setSize(gameWidth, gameHeight);
+        //If statement to check whether the scene is a menu scene or not - if it's not a menu scene then the camera will follow the player
+        //If it is a menu scene then the camera will be set to a specific location
         if (activeScene == menuScene || activeScene == leaderboardScene || activeScene == winScene || activeScene == loseScene)
         {
             Camera.setCenter(gameWidth / 2, gameHeight * 0.65);

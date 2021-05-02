@@ -101,7 +101,7 @@ void DungeonScene::load()
 	b2->modifier = 2.f; //2.f is double the current player damage - default player damage is 25 so when buff applied will be 50
 	buffs.push_back(b2);
 
-	//Looping to create hard difficulty enemies
+	//Looping to create hard difficulty enemies - Creating 2 hard enemies
 	for (int i = 0; i < 2; i++)
 	{
 		auto en = std::make_shared<Enemy>();
@@ -139,6 +139,7 @@ void DungeonScene::update(double dt)
 		return;
 	}
 
+	//If player dies - Show the lose screen and unload any loaded maps
 	if (!player->isAlive())
 	{
 		activeScene = loseScene;
@@ -234,10 +235,10 @@ void DungeonScene::restart()
 
 void BossScene::load()
 {
+	//Adding the player to the boss scene
 	_ents.list.push_back(player);
 
-	//may be cool to add actor buff component to boss where they have a higher fire rate when they reach 50% health
-	//so in update function - when boss health is less than 50% of its original health - apply attack speed buff
+	//Loading in the boss enemy
 	auto b = std::make_shared<Enemy>();
 	b->setHealthPool(3000);
 	b->setBulletRange(5000.f);
@@ -256,29 +257,32 @@ void BossScene::load()
 
 	PlayerGUI::initialiseGUI();
 
-	phaseFlag = false;
+	phaseFlag = false; //Flag used to identify if the boss has entered their next combat phase
 }
 
 
 void BossScene::update(double dt)
 {
+	//If the boss dead and the time the user has taken to complete the dungeon has not been noted - then get the time completed 
 	if (!boss->isAlive() && !gotTime)
 	{
 		gotTime = true;
 		timeCompleted = timer.getElapsedTime().asSeconds();
 		std::cout << "Completed dungeon in: " << timeCompleted << std::endl;
 
-		activeScene = winScene;  //After boss has been defeated - player has won
+		activeScene = winScene;  //After boss has been defeated - player has won, so swap to victory screen and unload the map
 		ls::Unload();
 		return;
 	}
 
+	//If player is not alive then switch to lose scene and unload the map
 	if (!player->isAlive())
 	{
 		activeScene = loseScene;
 		ls::Unload();
 		return;
 	}
+
 	// Boss attack and movement speed increases at half hp. Also plays a soundeffect to signal this.
 	if (boss->isAlive() && boss->getHealthPool()/2 >= boss->getHealth() && phaseFlag == false)
 	{
@@ -318,7 +322,7 @@ void BossScene::restart()
 	boss->setFirerate(0.6f);
 	boss->GetCompatibleComponent<EnemyMovementComponent>()[0]->setSpeed(40.f);
 
-	phaseFlag = false;
+	phaseFlag = false; //Resetting phase flag
 }
 
 void MenuScene::load()
@@ -363,6 +367,7 @@ void MenuScene::update(double dt)
 		playText.setFillColor(sf::Color::White);
 	}
 
+	//Handling hovering over and clicking the leaderboards button
 	if (mousepos.x > leaderboardButton.getPosition().x && mousepos.x < leaderboardButton.getPosition().x + 200 && mousepos.y > leaderboardButton.getPosition().y && mousepos.y < leaderboardButton.getPosition().y + 50)
 	{
 		leaderboardButton.setFillColor(sf::Color::Yellow);
@@ -444,7 +449,7 @@ void VictoryScene::update(double dt)
 
 	playerText.setString("Enter Name: " + playerInput);
 
-	//Need if for when user presess "submit" button to save the scores and then go back to menu page
+	//If user presses submit button then score will be added to leaderboard and scene will switch back to main menu
 	if (mousepos.x > submitButton.getPosition().x && mousepos.x < submitButton.getPosition().x + 200 && mousepos.y > submitButton.getPosition().y && mousepos.y < submitButton.getPosition().y + 50)
 	{
 		submitButton.setFillColor(sf::Color::Yellow);
@@ -470,18 +475,16 @@ void VictoryScene::update(double dt)
 					break;
 				}
 			}
-			//leaderboard.push_back(newScore);
 
+			//Saving scores to the leaderboard file
 			Scores::saveScoresToFile(leaderboard, LeaderboardScene::getLeaderboardFilePath());
 			leaderboardScene->restart();
 
-			//LeaderboardScene::buildLeaderboard(leaderboard);
-
 			activeScene = menuScene;
 
-			//Resetting dungeon and boss scenes so all values are the default values and all entities are alive
+			//Resetting dungeon scene so that all entites respawn and spawn points for hard enemies and the boss room entrance are set
+			//Boss room is reset once user enters so there is no need to reset the boss scene here
 			dungeonScene->restart();
-			bossScene->restart();
 
 			//resetting victory screen
 			winScene->restart();
@@ -581,6 +584,7 @@ std::string LeaderboardScene::getLeaderboardFilePath()
 	return path;
 }
 
+//Leaderboard function that will construct the leaderboard with all the scores that are in the leaderboard vector
 void LeaderboardScene::restart()
 {
 	std::string resultText = "";

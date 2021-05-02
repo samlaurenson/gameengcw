@@ -12,6 +12,7 @@ sf::Sprite PlayerGUI::_atkDamageBuff;
 bool PlayerGUI::_atkSpeedBool = false;
 bool PlayerGUI::_atkDamageBool = false;
 
+//Function to set the visual elements of the GUI
 void PlayerGUI::initialiseGUI()
 {
 	// --- Creating the HP Bar ---
@@ -29,12 +30,14 @@ void PlayerGUI::initialiseGUI()
 	_timeSpent.setCharacterSize(24);
 }
 
+//Function to modify the health bar to accurately represent the amount of remaining health the player has
 void PlayerGUI::setHPBar(float health, float hpPool)
 {
 	float healthScale = health / hpPool;
 	_hpBar.setScale(healthScale, 1.f);
 }
 
+//Function to make visible the attack speed buff to the user
 void PlayerGUI::showAtkSpeedBuff()
 {
 	_atkSpeedBuff.setPosition(Camera.getCenter().x - gameWidth / 2 + 400, Camera.getCenter().y - gameHeight / 2);
@@ -42,6 +45,7 @@ void PlayerGUI::showAtkSpeedBuff()
 	_atkSpeedBuff.setTextureRect(sf::IntRect(32, 0, 32, 32));
 }
 
+//Function to make the attack damage buff visible to the user
 void PlayerGUI::showAtkDamageBuff()
 {
 	_atkDamageBuff.setPosition(Camera.getCenter().x - gameWidth / 2 + 440, Camera.getCenter().y - gameHeight / 2);

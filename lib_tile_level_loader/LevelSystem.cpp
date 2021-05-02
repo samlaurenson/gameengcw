@@ -33,6 +33,7 @@ void LevelSystem::setColor(LevelSystem::TILE t, sf::Color c)
 	}
 }
 
+//Function to create the tiles in the map 
 void LevelSystem::loadLevelFile(const std::string& path, float tileSize)
 {
 	_tileSize = tileSize;
@@ -129,11 +130,13 @@ void LevelSystem::buildSprites()
 	}
 }
 
+//Returns the position of a passed in tile
 Vector2f LevelSystem::getTilePosition(Vector2ul p)
 {
 	return (Vector2f(p.x, p.y) * _tileSize);
 }
 
+//Function that will change the tile given its location in the grid and the new tile type it is set to be
 void LevelSystem::setTileType(Vector2ul p, TILE t)
 {
 	if (p.x > _width || p.y > _height)
@@ -144,6 +147,7 @@ void LevelSystem::setTileType(Vector2ul p, TILE t)
 	buildSprites();
 }
 
+//Function to return a tile based on it's location in the map grid
 LevelSystem::TILE LevelSystem::getTile(Vector2ul p)
 {
 	if (p.x > _width || p.y > _height)
@@ -152,6 +156,8 @@ LevelSystem::TILE LevelSystem::getTile(Vector2ul p)
 	}
 	return _tiles[(p.y * _width) + p.x];
 }
+
+//Function to return a tile that is at a given position
 LevelSystem::TILE LevelSystem::getTileAt(Vector2f v)
 {
 	auto a = v - _offset;
@@ -188,12 +194,14 @@ vector<Vector2ul> LevelSystem::findTiles(TILE lookupTile)
 	return foundTiles;
 }
 
+//Function to unload a map
 void LevelSystem::Unload()
 {
 	_tiles = nullptr;
 	std::cout << "Unloaded" << std::endl;
 }
 
+//Function to return if a map is currently loaded in
 bool LevelSystem::isLoaded()
 {
 	if (_tiles != nullptr)

@@ -2,6 +2,7 @@
 #include <../lib_ecm/ecm.h>
 #include <LevelSystem.h>
 
+//Component that will be used to set the speed of entities and to determine if a move is valid
 class ActorMovementComponent : public Component {
 protected:
 	bool validMove(const sf::Vector2f&);
